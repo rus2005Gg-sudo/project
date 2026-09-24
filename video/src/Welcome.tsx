@@ -17,7 +17,7 @@ const S = {
 } as const;
 
 const sceneOpacity = (f: number, [a, b]: readonly [number, number], last = false) =>
-	interpolate(f, [a, a + 4, b - 4, b], [0, 1, 1, last ? 1 : 0], clamp);
+	interpolate(f, [a, a + 4, b - 4, b], [a === 0 ? 1 : 0, 1, 1, last ? 1 : 0], clamp);
 
 const Pill: React.FC<{children: React.ReactNode; size?: number; style?: React.CSSProperties; light?: boolean}> = ({
 	children,
@@ -63,7 +63,7 @@ const LogoScene: React.FC<{f: number}> = ({f}) => {
 	const scale = interpolate(f, [0, 12, 21], [0.8, 1.05, 1], {...clamp, easing: Easing.out(Easing.cubic)});
 	return (
 		<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', opacity: sceneOpacity(f, S.logo)}}>
-			<Glow x={480} y={230} r={210} o={0.9 * interpolate(f, [0, 12], [0, 1], clamp)} color="255,255,255" />
+			<Glow x={480} y={230} r={210} o={0.9 * interpolate(f, [0, 12], [0.5, 1], clamp)} color="255,255,255" />
 			<div style={{transform: `scale(${scale})`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
 				<Logo size={220} />
 				<div style={{fontFamily, fontWeight: 900, fontSize: 64, color: '#0b1b44', letterSpacing: -1}}>
