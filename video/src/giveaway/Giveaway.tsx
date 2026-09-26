@@ -499,6 +499,63 @@ const S5Features: React.FC = () => {
 	);
 };
 
+
+const whyRows: [string, string, string][] = [
+	['Скорость', 'режут', 'до 10 Гбит/с'],
+	['Логи', 'хранят', '0 логов'],
+	['Соцсети', 'тормозят', 'без блокировок'],
+	['Подключение', 'сам разбирайся', 'AI за минуту'],
+	['Устройства', '1–2', 'все сразу'],
+	['Серверы', 'падают', '24/7'],
+];
+
+const Mark: React.FC<{ok: boolean}> = ({ok}) => (
+	<svg width="40" height="40" viewBox="0 0 24 24">
+		<circle cx="12" cy="12" r="11" fill={ok ? '#22c55e' : '#ff4d6d'} />
+		{ok ? <path d="M7 12.5 L10.5 16 L17 9" stroke="#fff" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /> : <path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" />}
+	</svg>
+);
+
+const S5Why: React.FC = () => {
+	const f = useCurrentFrame();
+	return (
+		<AbsoluteFill>
+			<Waves />
+			<Brand />
+			<Headline a="Почему" b="Horz VPN?" top={240} size={116} />
+			<div style={{position: 'absolute', top: 560, left: 60, right: 60}}>
+				<Glass style={{padding: '30px 30px 20px'}}>
+					<div style={{display: 'grid', gridTemplateColumns: '1.05fr 1fr 1.2fr', gap: 10, fontFamily: font, fontWeight: 900, fontSize: 30, color: '#6b7a99', padding: '0 10px 16px'}}>
+						<div />
+						<div>Обычный VPN</div>
+						<div style={{color: BLUE}}>Horz VPN</div>
+					</div>
+					{whyRows.map(([k, bad, good], i) => {
+						const p = interpolate(f - 16 - i * 16, [0, 12], [0, 1], {...cl, easing: ease});
+						return (
+							<div key={k} style={{display: 'grid', gridTemplateColumns: '1.05fr 1fr 1.2fr', gap: 10, alignItems: 'center', padding: '20px 10px', borderTop: '2px solid #e6eefb', opacity: p, translate: `${(1 - p) * 80}px 0`}}>
+								<div style={{fontFamily: font, fontWeight: 900, fontSize: 36, color: NAVY}}>{k}</div>
+								<div style={{display: 'flex', alignItems: 'center', gap: 10, fontFamily: font, fontWeight: 800, fontSize: 30, color: '#9aa8c4'}}>
+									<Mark ok={false} />
+									{bad}
+								</div>
+								<div style={{display: 'flex', alignItems: 'center', gap: 10, fontFamily: font, fontWeight: 900, fontSize: 34, color: NAVY, background: '#eaf3ff', borderRadius: 20, padding: '10px 12px'}}>
+									<Mark ok />
+									{good}
+								</div>
+							</div>
+						);
+					})}
+				</Glass>
+			</div>
+			<RobotAt id="w" x={880} bottom={1800} size={280} pose={{armR: 140, wave: Math.sin(f / 5) * 15, eyes: 'happy', blink: blink(f)}} />
+			{whyRows.map((_, i) => (
+				<Sfx key={i} at={16 + i * 16} src="tick-001" volume={0.35} />
+			))}
+		</AbsoluteFill>
+	);
+};
+
 const S6Cta: React.FC = () => {
 	const f = useCurrentFrame();
 	const plus = useSp(10, 8, 200);
@@ -547,7 +604,8 @@ const SCENES: {C: React.FC; d: number; t?: 'slide' | 'fade' | 'wipe' | 'up'}[] =
 	{C: S2Step, d: 90, t: 'slide'},
 	{C: S3Comments, d: 150, t: 'up'},
 	{C: S4Telegram, d: 180, t: 'slide'},
-	{C: S5Features, d: 120, t: 'wipe'},
+	{C: S5Why, d: 150, t: 'wipe'},
+	{C: S5Features, d: 100, t: 'up'},
 	{C: S6Cta, d: 110, t: 'up'},
 ];
 
