@@ -1,5 +1,7 @@
-import json, numpy as np, wave
-tl = json.load(open('src/reel/timeline.json')); T = tl['total']
+import json, numpy as np, wave, sys
+TL = sys.argv[1] if len(sys.argv) > 1 else 'src/reel/timeline.json'
+OUT = sys.argv[2] if len(sys.argv) > 2 else 'public/reel/music.wav'
+tl = json.load(open(TL)); T = tl['total']
 st = {s['id']: s['start'] for s in tl['segments']}
 sr = 44100; n = int(T * sr); t = np.arange(n) / sr
 rng = np.random.default_rng(7)
@@ -19,7 +21,7 @@ L = int(0.3*sr); tt = np.arange(L)/sr
 K = np.sin(2*np.pi*(45 + 110*np.exp(-tt*28))*tt) * np.exp(-tt*8)
 H = rng.standard_normal(int(0.04*sr)) * np.exp(-np.arange(int(0.04*sr))/sr*90)
 notes_dark = [55, 55, 65.4, 49]; notes_light = [65.4, 73.4, 87.3, 98]
-for k, b in enumerate(np.arange(st['forum'], T - 1.0, beat)):
+for k, b in enumerate(np.arange(list(st.values())[1], T - 1.0, beat)):
     place(kick, b, K * 0.5)
     place(hat, b + beat/2, H * 0.07)
     f0 = (notes_light if b >= horz else notes_dark)[(k // 4) % 4]
@@ -44,7 +46,7 @@ for at, amp in [(0, 0.7), (horz, 0.6)]:
 mix = (drone + air*0.35) * dark + chords * light + arp + kick + hat + bass + fx
 mix *= np.clip(t/0.02, 0, 1) * np.clip((T - t)/1.5, 0, 1)
 mix = np.tanh(mix * 1.3) * 0.6
-with wave.open('public/reel/music.wav', 'w') as w:
+with wave.open(OUT, 'w') as w:
     w.setnchannels(2); w.setsampwidth(2); w.setframerate(sr)
     w.writeframes((np.stack([mix, mix], 1) * 32767).astype('<i2').tobytes())
 print('ok', T)
