@@ -8,27 +8,27 @@ import {Robot, RPose} from './Robot';
 import {font} from '../reel/ui';
 
 export const G_FPS = 30;
-const TR = 10;
-const NAVY = '#0b1b44';
-const BLUE = '#1a7cf5';
-const ease = Easing.bezier(0.16, 1, 0.3, 1);
-const cl = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+export const TR = 10;
+export const NAVY = '#0b1b44';
+export const BLUE = '#1a7cf5';
+export const ease = Easing.bezier(0.16, 1, 0.3, 1);
+export const cl = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 
-const useSp = (at: number, damping = 13, stiffness = 170) => {
+export const useSp = (at: number, damping = 13, stiffness = 170) => {
 	const f = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	return spring({frame: f - at, fps, config: {damping, stiffness}});
 };
 
-const blink = (f: number) => (f % 90 > 86 ? 0.2 : 1);
+export const blink = (f: number) => (f % 90 > 86 ? 0.2 : 1);
 
-const Sfx: React.FC<{at: number; src: string; volume?: number}> = ({at, src, volume = 0.5}) => (
+export const Sfx: React.FC<{at: number; src: string; volume?: number}> = ({at, src, volume = 0.5}) => (
 	<Sequence from={at} layout="none">
 		<Audio src={staticFile(`sfx/${src}.mp3`)} volume={volume} />
 	</Sequence>
 );
 
-const Waves: React.FC = () => {
+export const Waves: React.FC = () => {
 	const f = useCurrentFrame();
 	const t = f / 30;
 	return (
@@ -77,7 +77,7 @@ const Waves: React.FC = () => {
 	);
 };
 
-const Brand: React.FC = () => (
+export const Brand: React.FC = () => (
 	<div style={{position: 'absolute', top: 110, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 18}}>
 		<div style={{width: 76, height: 76, borderRadius: 22, background: '#fff', boxShadow: '0 8px 24px rgba(11,95,232,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
 			<Img src={staticFile('reel/logo.png')} style={{width: 50}} />
@@ -88,7 +88,7 @@ const Brand: React.FC = () => (
 	</div>
 );
 
-const Headline: React.FC<{a: string; b?: string; at?: number; top: number; size?: number}> = ({a, b, at = 0, top, size = 104}) => {
+export const Headline: React.FC<{a: string; b?: string; at?: number; top: number; size?: number}> = ({a, b, at = 0, top, size = 104}) => {
 	const f = useCurrentFrame();
 	const line = (txt: string, d: number, grad: boolean) => {
 		const p = interpolate(f - at - d, [0, 14], [0, 1], {...cl, easing: ease});
@@ -117,7 +117,7 @@ const Headline: React.FC<{a: string; b?: string; at?: number; top: number; size?
 	);
 };
 
-const Glass: React.FC<{children: React.ReactNode; style?: React.CSSProperties}> = ({children, style}) => (
+export const Glass: React.FC<{children: React.ReactNode; style?: React.CSSProperties}> = ({children, style}) => (
 	<div
 		style={{
 			background: 'rgba(255,255,255,0.82)',
@@ -131,7 +131,7 @@ const Glass: React.FC<{children: React.ReactNode; style?: React.CSSProperties}> 
 	</div>
 );
 
-const RobotAt: React.FC<{x: number; bottom: number; size: number; pose: RPose; id: string; enter?: number; from?: 'bottom' | 'right'}> = ({x, bottom, size, pose, id, enter = 0, from = 'bottom'}) => {
+export const RobotAt: React.FC<{x: number; bottom: number; size: number; pose: RPose; id: string; enter?: number; from?: 'bottom' | 'right'}> = ({x, bottom, size, pose, id, enter = 0, from = 'bottom'}) => {
 	const f = useCurrentFrame();
 	const p = useSp(enter, 12, 140);
 	const float = Math.sin(f / 14) * 10;
@@ -151,7 +151,7 @@ const RobotAt: React.FC<{x: number; bottom: number; size: number; pose: RPose; i
 
 /* ---------------- scenes ---------------- */
 
-const Gift: React.FC = () => {
+export const Gift: React.FC = () => {
 	const f = useCurrentFrame();
 	const lid = interpolate(f, [26, 38], [0, 1], {...cl, easing: ease});
 	const burst = interpolate(f, [30, 70], [0, 1], cl);
@@ -259,7 +259,7 @@ const S2Step: React.FC = () => {
 	);
 };
 
-const typeText = (f: number, from: number, text: string, cps = 1.2) => text.slice(0, Math.max(0, Math.floor((f - from) / cps)));
+export const typeText = (f: number, from: number, text: string, cps = 1.2) => text.slice(0, Math.max(0, Math.floor((f - from) / cps)));
 
 const Comment: React.FC<{name: string; text: string; at: number; color: string}> = ({name, text, at, color}) => {
 	const p = useSp(at, 14, 200);
@@ -402,7 +402,7 @@ const S4Telegram: React.FC = () => {
 	);
 };
 
-const Bubble: React.FC<{children: React.ReactNode; me?: boolean; at: number}> = ({children, me, at}) => {
+export const Bubble: React.FC<{children: React.ReactNode; me?: boolean; at: number}> = ({children, me, at}) => {
 	const p = useSp(at, 13, 220);
 	return (
 		<div
@@ -434,7 +434,7 @@ const feats = [
 	['AI-помощник', '24/7', 'bot'],
 ];
 
-const FeatIcon: React.FC<{k: string}> = ({k}) => (
+export const FeatIcon: React.FC<{k: string}> = ({k}) => (
 	<svg width="74" height="74" viewBox="0 0 24 24">
 		<defs>
 			<linearGradient id={`fi${k}`} x1="0" y1="0" x2="1" y2="1">
@@ -509,7 +509,7 @@ const whyRows: [string, string, string][] = [
 	['Серверы', 'падают', '24/7'],
 ];
 
-const Mark: React.FC<{ok: boolean}> = ({ok}) => (
+export const Mark: React.FC<{ok: boolean}> = ({ok}) => (
 	<svg width="40" height="40" viewBox="0 0 24 24">
 		<circle cx="12" cy="12" r="11" fill={ok ? '#22c55e' : '#ff4d6d'} />
 		{ok ? <path d="M7 12.5 L10.5 16 L17 9" stroke="#fff" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /> : <path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" />}

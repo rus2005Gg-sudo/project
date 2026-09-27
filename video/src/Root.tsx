@@ -7,6 +7,7 @@ import {GYM_FPS, GYM_FRAMES, Gym} from './gym/Gym';
 import {PROMO_FRAMES, P_FPS, Promo} from './promo/Promo';
 import {RobotTest} from './giveaway/RobotTest';
 import {GIVEAWAY_FRAMES, G_FPS, Giveaway} from './giveaway/Giveaway';
+import {MONTH_FRAMES, M_FPS, Month} from './month/Month';
 
 export const Root: React.FC = () => (
 	<>
@@ -14,6 +15,7 @@ export const Root: React.FC = () => (
 		<Composition id="Reel" component={Reel} durationInFrames={REEL_FRAMES} fps={FPS} width={1080} height={1920} />
 		<Composition id="Gym" component={Gym} durationInFrames={GYM_FRAMES} fps={GYM_FPS} width={1080} height={1920} />
 		<Composition id="Promo" component={Promo} durationInFrames={PROMO_FRAMES} fps={P_FPS} width={1080} height={1920} />
+		<Composition id="Month" component={Month} durationInFrames={MONTH_FRAMES} fps={M_FPS} width={1080} height={1920} />
 		<Composition id="Giveaway" component={Giveaway} durationInFrames={GIVEAWAY_FRAMES} fps={G_FPS} width={1080} height={1920} />
 		<Composition id="RobotTest" component={RobotTest} durationInFrames={1} fps={30} width={1080} height={960} />
 		<Composition id="PoseTest" component={PoseTest} durationInFrames={1} fps={30} width={1080} height={1920} />
