@@ -9,6 +9,7 @@ import {RobotTest} from './giveaway/RobotTest';
 import {GIVEAWAY_FRAMES, G_FPS, Giveaway} from './giveaway/Giveaway';
 import {MONTH_FRAMES, M_FPS, Month} from './month/Month';
 import {StyleFrames} from './style/StyleFrames';
+import {Avatar} from './profile/Avatar';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
 export const Root: React.FC = () => (
@@ -18,6 +19,7 @@ export const Root: React.FC = () => (
 		<Composition id="Gym" component={Gym} durationInFrames={GYM_FRAMES} fps={GYM_FPS} width={1080} height={1920} />
 		<Composition id="Promo" component={Promo} durationInFrames={PROMO_FRAMES} fps={P_FPS} width={1080} height={1920} />
 		<Composition id="MonthApple" component={MonthApple} durationInFrames={MONTH_APPLE_FRAMES} fps={MA_FPS} width={1080} height={1920} />
+		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
 		<Composition id="Month" component={Month} durationInFrames={MONTH_FRAMES} fps={M_FPS} width={1080} height={1920} />
 		<Composition id="Giveaway" component={Giveaway} durationInFrames={GIVEAWAY_FRAMES} fps={G_FPS} width={1080} height={1920} />
