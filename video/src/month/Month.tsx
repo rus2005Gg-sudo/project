@@ -1,9 +1,11 @@
 import React from 'react';
-import {AbsoluteFill, Easing, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Easing, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {slide} from '@remotion/transitions/slide';
 import {wipe} from '@remotion/transitions/wipe';
-import {BLUE, Brand, Gift, Glass, Headline, Mark, NAVY, RobotAt, Sfx, Waves, blink, cl, ease, useSp} from '../giveaway/Giveaway';
+import {BLUE, Brand, Gift, Glass, Headline, Mark, NAVY, Sfx as BaseSfx, Waves, cl, ease, useSp} from '../giveaway/Giveaway';
+
+const Sfx: React.FC<{at: number; src: string; volume?: number}> = ({volume = 0.5, ...r}) => <BaseSfx {...r} volume={volume * 0.55} />;
 import {font} from '../reel/ui';
 
 export const M_FPS = 30;
@@ -75,7 +77,6 @@ const S1Hook: React.FC = () => {
 			<Brand />
 			<Headline a="Месяц VPN" b="бесплатно!" top={260} size={124} />
 			<Gift />
-			<RobotAt id="mh" x={830} bottom={1660} size={360} enter={6} from="right" pose={{armR: 150, wave: Math.sin(f / 4) * 25, tilt: -6, eyes: 'happy', blink: blink(f)}} />
 			<Sfx at={6} src="card-slide-1" />
 			<Sfx at={30} src="success-chime" volume={0.55} />
 		</AbsoluteFill>
@@ -90,12 +91,11 @@ const S2Offer: React.FC = () => {
 			<Brand />
 			<Headline a="Что" b="в подарке?" top={250} size={120} />
 			<div style={{position: 'absolute', top: 600, left: 110, right: 110, display: 'flex', flexDirection: 'column', gap: 34}}>
-				<Chip at={10} icon={<Ico k="cal" />} big="30 дней" small="полный доступ" />
-				<Chip at={22} icon={<Ico k="db" />} big="100 ГБ" small="трафика" />
-				<Chip at={34} icon={<Ico k="dev" />} big="2 устройства" small="телефон + ноутбук" />
+				<Chip at={4} icon={<Ico k="cal" />} big="30 дней" small="полный доступ" />
+				<Chip at={28} icon={<Ico k="db" />} big="100 ГБ" small="трафика" />
+				<Chip at={52} icon={<Ico k="dev" />} big="2 устройства" small="телефон + ноутбук" />
 			</div>
-			<RobotAt id="mo" x={880} bottom={1820} size={260} pose={{armR: 140, wave: Math.sin(f / 5) * 15, eyes: 'happy', blink: blink(f)}} />
-			{[10, 22, 34].map((a) => (
+			{[4, 28, 52].map((a) => (
 				<Sfx key={a} at={a} src="notification-pop" volume={0.4} />
 			))}
 		</AbsoluteFill>
@@ -106,7 +106,7 @@ const dataRows = ['IP-адрес', 'Какие сайты открываешь',
 
 const S3NoLogs: React.FC = () => {
 	const f = useCurrentFrame();
-	const stamp = useSp(78, 9, 240);
+	const stamp = useSp(112, 9, 240);
 	return (
 		<AbsoluteFill>
 			<Waves />
@@ -116,8 +116,8 @@ const S3NoLogs: React.FC = () => {
 				<Glass style={{padding: '40px 44px'}}>
 					<div style={{fontFamily: font, fontWeight: 900, fontSize: 34, color: '#6b7a99', marginBottom: 18}}>Что мы храним о тебе:</div>
 					{dataRows.map((r, i) => {
-						const on = interpolate(f - 14 - i * 12, [0, 10], [0, 1], {...cl, easing: ease});
-						const strike = interpolate(f - 20 - i * 12, [0, 8], [0, 1], {...cl, easing: ease});
+						const on = interpolate(f - 10 - i * 20, [0, 10], [0, 1], {...cl, easing: ease});
+						const strike = interpolate(f - 18 - i * 20, [0, 8], [0, 1], {...cl, easing: ease});
 						return (
 							<div key={r} style={{display: 'flex', alignItems: 'center', gap: 20, padding: '18px 0', borderTop: i ? '2px solid #e6eefb' : 'none', opacity: on, translate: `${(1 - on) * 60}px 0`}}>
 								<Mark ok={false} />
@@ -145,9 +145,9 @@ const S3NoLogs: React.FC = () => {
 				<div style={{fontFamily: font, fontWeight: 900, fontSize: 96, color: '#fff', background: 'linear-gradient(180deg,#1a9bff,#0b5fe8)', borderRadius: 36, padding: '10px 50px', boxShadow: '0 20px 60px rgba(11,95,232,0.45)'}}>Ничего. 0 логов</div>
 			</div>
 			{dataRows.map((_, i) => (
-				<Sfx key={i} at={20 + i * 12} src="tick-001" volume={0.35} />
+				<Sfx key={i} at={18 + i * 20} src="tick-001" volume={0.35} />
 			))}
-			<Sfx at={78} src="impact-punch-medium-001" volume={0.5} />
+			<Sfx at={112} src="impact-punch-medium-001" volume={0.5} />
 		</AbsoluteFill>
 	);
 };
@@ -200,7 +200,7 @@ const apps = [
 
 const S5Stable: React.FC = () => {
 	const f = useCurrentFrame();
-	const chip = useSp(46, 12, 180);
+	const chip = useSp(72, 12, 180);
 	return (
 		<AbsoluteFill>
 			<Waves />
@@ -248,9 +248,9 @@ const S6Ai: React.FC = () => {
 			<Waves />
 			<Brand />
 			<Headline a="AI-помощник" b="поможет подключиться" top={250} size={70} />
-			<div style={{position: 'absolute', top: 640, left: 90, right: 90, display: 'flex', flexDirection: 'column', gap: 28}}>
-				<div style={{alignSelf: 'flex-end', scale: String(b1), transformOrigin: 'bottom right', background: BLUE, color: '#fff', fontFamily: font, fontWeight: 800, fontSize: 48, padding: '26px 38px', borderRadius: '40px 40px 8px 40px', boxShadow: '0 12px 30px rgba(11,95,232,0.3)'}}>Как подключиться на iPhone?</div>
-				<div style={{alignSelf: 'flex-start', scale: String(b2), transformOrigin: 'bottom left', background: '#fff', color: NAVY, fontFamily: font, fontWeight: 800, fontSize: 46, padding: '26px 38px', borderRadius: '40px 40px 40px 8px', boxShadow: '0 12px 30px rgba(11,40,100,0.12)', display: 'flex', alignItems: 'center', gap: 16, minWidth: 180}}>
+			<div style={{position: 'absolute', top: 780, left: 80, right: 80, display: 'flex', flexDirection: 'column', gap: 34}}>
+				<div style={{alignSelf: 'flex-end', scale: String(b1), transformOrigin: 'bottom right', background: BLUE, color: '#fff', fontFamily: font, fontWeight: 800, fontSize: 56, padding: '30px 44px', borderRadius: '44px 44px 8px 44px', boxShadow: '0 12px 30px rgba(11,95,232,0.3)'}}>Как подключиться на iPhone?</div>
+				<div style={{alignSelf: 'flex-start', scale: String(b2), transformOrigin: 'bottom left', background: '#fff', color: NAVY, fontFamily: font, fontWeight: 800, fontSize: 54, padding: '30px 44px', borderRadius: '44px 44px 44px 8px', boxShadow: '0 12px 30px rgba(11,40,100,0.12)', display: 'flex', alignItems: 'center', gap: 16, minWidth: 180}}>
 					{typing ? [0, 1, 2].map((i) => <span key={i} style={{width: 18, height: 18, borderRadius: 9, background: '#8aa0c8', translate: `0 ${Math.sin(f / 2 + i) * 6}px`}} />) : null}
 					{done ? (
 						<>
@@ -260,7 +260,6 @@ const S6Ai: React.FC = () => {
 					) : null}
 				</div>
 			</div>
-			<RobotAt id="ai" x={540} bottom={1720} size={380} pose={{armR: 140, wave: Math.sin(f / 5) * 15, tilt: Math.sin(f / 12) * 5, eyes: done ? 'happy' : 'round', blink: blink(f)}} />
 			<Sfx at={8} src="notification-pop" volume={0.4} />
 			<Sfx at={46} src="success-chime" volume={0.5} />
 		</AbsoluteFill>
@@ -274,28 +273,33 @@ const SRC_H = 1704;
 const SCREEN_W = 560;
 const SCREEN_H = (SCREEN_W * SRC_H) / SRC_W;
 const K = SCREEN_W / SRC_W;
-const VIDEO_START = 0.6;
-const VIDEO_END_F = Math.round((6.1 - VIDEO_START) * 30);
+// source seconds of the recording: Старт tapped 1.45, gift button 4.15, gift arrives 5.0, end 6.1
+const SEG_A = 70; // src 0 -> 1.45
+const SEG_B = 125; // src 1.45 -> 4.15
+const SEG_C = 183; // src 4.15 -> 6.1
+const TAP_START = SEG_A;
+const TAP_GIFT = SEG_B;
+const TAP_CONNECT = 222;
 
 type Cam = [number, number, number, number];
 const cams: Cam[] = [
 	[0, 413, 852, 1],
-	[16, 413, 852, 1],
-	[26, 413, 1500, 1.6],
-	[36, 413, 1500, 1.6],
-	[48, 413, 852, 1],
-	[58, 413, 852, 1],
-	[70, 323, 1060, 1.35],
-	[96, 323, 1060, 1.35],
-	[104, 323, 1300, 1.5],
-	[114, 323, 1300, 1.5],
-	[126, 413, 852, 1],
-	[134, 413, 852, 1],
-	[148, 323, 850, 1.35],
-	[176, 323, 850, 1.35],
-	[192, 323, 1230, 1.55],
-	[270, 323, 1230, 1.55],
-];
+	[46, 413, 852, 1],
+	[60, 413, 1500, 1.6],
+	[80, 413, 1500, 1.6],
+	[90, 413, 852, 1],
+	[94, 413, 852, 1],
+	[104, 323, 1060, 1.35],
+	[112, 323, 1060, 1.35],
+	[119, 323, 1300, 1.5],
+	[132, 323, 1300, 1.5],
+	[142, 413, 852, 1],
+	[150, 413, 852, 1],
+	[162, 323, 850, 1.35],
+	[190, 323, 850, 1.35],
+	[206, 323, 1230, 1.55],
+	[260, 323, 1230, 1.55],
+]
 
 const camAt = (f: number) => {
 	const ks = cams.map((c) => c[0]);
@@ -321,10 +325,12 @@ const Tap: React.FC<{x: number; y: number; at: number}> = ({x, y, at}) => {
 };
 
 const steps: [number, number, string, string][] = [
-	[0, 50, '1', 'Нажми «Старт»'],
-	[50, 126, '2', 'Жми «Месяц бесплатно»'],
-	[126, 999, '3', 'Подарок твой → «Подключить»'],
+	[0, 93, '1', 'Нажми «Старт»'],
+	[93, 151, '2', 'Жми «Месяц бесплатно»'],
+	[151, 999, '3', 'Подарок твой → «Подключить»'],
 ];
+
+const vidStyle: React.CSSProperties = {position: 'absolute', left: 0, top: 0, width: SRC_W, height: SRC_H, display: 'block'};
 
 const S7HowTo: React.FC = () => {
 	const f = useCurrentFrame();
@@ -347,49 +353,90 @@ const S7HowTo: React.FC = () => {
 				<div style={{padding: 18, borderRadius: 86, background: 'linear-gradient(160deg,#2b3350,#0b0f1c)', boxShadow: '0 40px 100px rgba(11,40,120,0.35), inset 0 0 0 3px #4a557a'}}>
 					<div style={{position: 'relative', width: SCREEN_W, height: SCREEN_H, borderRadius: 70, overflow: 'hidden', background: '#000'}}>
 						<div style={{position: 'absolute', left: 0, top: 0, width: SRC_W, height: SRC_H, transformOrigin: '0 0', transform: `translate(${SCREEN_W / 2 - cx * s}px, ${SCREEN_H / 2 - cy * s}px) scale(${s})`}}>
-							<Sequence durationInFrames={VIDEO_END_F} layout="none">
-								<OffthreadVideo src={staticFile('giveaway/howto.mp4')} trimBefore={Math.round(VIDEO_START * 30)} muted style={{width: SRC_W, height: SRC_H, display: 'block'}} />
+							<Sequence durationInFrames={SEG_A} layout="none">
+								<OffthreadVideo src={staticFile('giveaway/howto.mp4')} playbackRate={1.45 / (SEG_A / 30)} muted style={vidStyle} />
 							</Sequence>
-							{f >= VIDEO_END_F ? <Img src={staticFile('giveaway/howto_last.png')} style={{position: 'absolute', left: 0, top: 0, width: SRC_W, height: SRC_H}} /> : null}
-							<Tap x={413} y={1577} at={26} />
-							<Tap x={320} y={1408} at={106} />
-							<Tap x={320} y={1322} at={214} />
+							<Sequence from={SEG_A} durationInFrames={SEG_B - SEG_A} layout="none">
+								<OffthreadVideo src={staticFile('giveaway/howto.mp4')} trimBefore={Math.round(1.45 * 30)} playbackRate={(4.15 - 1.45) / ((SEG_B - SEG_A) / 30)} muted style={vidStyle} />
+							</Sequence>
+							<Sequence from={SEG_B} durationInFrames={SEG_C - SEG_B} layout="none">
+								<OffthreadVideo src={staticFile('giveaway/howto.mp4')} trimBefore={Math.round(4.15 * 30)} muted style={vidStyle} />
+							</Sequence>
+							{f >= SEG_C ? <Img src={staticFile('giveaway/howto_last.png')} style={vidStyle} /> : null}
+							<Tap x={413} y={1577} at={TAP_START} />
+							<Tap x={320} y={1408} at={TAP_GIFT} />
+							<Tap x={320} y={1322} at={TAP_CONNECT} />
 						</div>
 						<div style={{position: 'absolute', left: '50%', top: 14, translate: '-50% 0', width: 170, height: 40, borderRadius: 20, background: '#000'}} />
 					</div>
 				</div>
 			</div>
-			{f > 72 && f < 104 ? (
-				<div style={{position: 'absolute', top: 1625, width: '100%', display: 'flex', justifyContent: 'center', opacity: interpolate(f, [72, 80, 96, 104], [0, 1, 1, 0], cl)}}>
+			{f > 98 && f < 126 ? (
+				<div style={{position: 'absolute', top: 1625, width: '100%', display: 'flex', justifyContent: 'center', opacity: interpolate(f, [98, 104, 120, 126], [0, 1, 1, 0], cl)}}>
 					<Glass style={{padding: '22px 40px', fontFamily: font, fontWeight: 900, fontSize: 50, color: NAVY}}>
 						30 дней · <span style={{color: BLUE}}>100 ГБ</span> · 2 устройства
 					</Glass>
 				</div>
 			) : null}
-			{f > 150 ? (
-				<div style={{position: 'absolute', top: 1625, width: '100%', display: 'flex', justifyContent: 'center', opacity: interpolate(f, [150, 160], [0, 1], cl)}}>
+			{f > 160 ? (
+				<div style={{position: 'absolute', top: 1625, width: '100%', display: 'flex', justifyContent: 'center', opacity: interpolate(f, [160, 170], [0, 1], cl)}}>
 					<Glass style={{padding: '22px 40px', display: 'flex', alignItems: 'center', gap: 16, fontFamily: font, fontWeight: 900, fontSize: 52, color: NAVY}}>
 						<Mark ok /> Подписка на месяц — твоя
 					</Glass>
 				</div>
 			) : null}
-			<Sfx at={26} src="switch-on" volume={0.5} />
-			<Sfx at={106} src="switch-on" volume={0.5} />
-			<Sfx at={132} src="success-chime" volume={0.5} />
-			<Sfx at={214} src="switch-on" volume={0.5} />
+			<Sfx at={TAP_START} src="switch-on" volume={0.5} />
+			<Sfx at={TAP_GIFT} src="switch-on" volume={0.5} />
+			<Sfx at={150} src="success-chime" volume={0.5} />
+			<Sfx at={TAP_CONNECT} src="switch-on" volume={0.5} />
 		</AbsoluteFill>
 	);
 };
 
 const S8Terms: React.FC = () => {
 	const f = useCurrentFrame();
-	const c = useSp(20, 12, 180);
+	const ch = useSp(8, 12, 180);
+	const c = useSp(68, 12, 180);
+	const tap = interpolate(f, [40, 46, 54], [0, 1, 0], cl);
+	const subscribed = f >= 46;
 	return (
 		<AbsoluteFill>
 			<Waves />
 			<Brand />
 			<Headline a="Подарок для подписчиков" b="нашего канала" top={280} size={80} />
-			<div style={{position: 'absolute', top: 620, width: '100%', display: 'flex', justifyContent: 'center', scale: String(c), opacity: c}}>
+			<div style={{position: 'absolute', top: 580, left: 90, right: 90, scale: String(ch), opacity: ch}}>
+				<Glass style={{padding: '30px 32px', display: 'flex', alignItems: 'center', gap: 24}}>
+					<div style={{width: 120, height: 120, borderRadius: 60, background: '#fff', boxShadow: '0 10px 26px rgba(11,95,232,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+						<Img src={staticFile('reel/logo.png')} style={{width: 80}} />
+					</div>
+					<div style={{flex: 1}}>
+						<div style={{fontFamily: font, fontWeight: 900, fontSize: 50, color: NAVY, whiteSpace: 'nowrap'}}>Horz VPN</div>
+						<div style={{fontFamily: font, fontWeight: 800, fontSize: 30, color: '#5b6a8a', whiteSpace: 'nowrap'}}>канал в Telegram</div>
+					</div>
+					<div
+						style={{
+							fontFamily: font,
+							fontWeight: 900,
+							fontSize: 30,
+							whiteSpace: 'nowrap',
+							flexShrink: 0,
+							color: subscribed ? BLUE : '#fff',
+							background: subscribed ? '#eaf3ff' : 'linear-gradient(180deg,#1a9bff,#0b5fe8)',
+							padding: '18px 24px',
+							borderRadius: 40,
+							scale: String(1 - 0.08 * tap),
+							boxShadow: subscribed ? 'none' : '0 10px 26px rgba(11,95,232,0.35)',
+							display: 'flex',
+							alignItems: 'center',
+							gap: 10,
+						}}
+					>
+						{subscribed ? <Mark ok /> : null}
+						{subscribed ? 'Вы подписаны' : 'Подписаться'}
+					</div>
+				</Glass>
+			</div>
+			<div style={{position: 'absolute', top: 900, width: '100%', display: 'flex', justifyContent: 'center', scale: String(c), opacity: c}}>
 				<Glass style={{padding: '40px 60px', display: 'flex', alignItems: 'center', gap: 30}}>
 					<div style={{width: 110, height: 110, borderRadius: 55, background: 'linear-gradient(180deg,#ff8a3d,#ff4d6d)', display: 'flex', alignItems: 'center', justifyContent: 'center', scale: String(1 + 0.06 * Math.sin(f / 4)), boxShadow: '0 12px 30px rgba(255,77,109,0.35)'}}>
 						<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
@@ -404,59 +451,66 @@ const S8Terms: React.FC = () => {
 					</div>
 				</Glass>
 			</div>
-			<RobotAt id="tr" x={540} bottom={1760} size={420} pose={{armL: 18, armR: 18, tilt: Math.sin(f / 10) * 6, eyes: 'round', blink: blink(f)}} />
-			<Sfx at={20} src="notification-pop" volume={0.45} />
+			<Sfx at={8} src="notification-pop" volume={0.45} />
+			<Sfx at={44} src="switch-on" volume={0.45} />
+			<Sfx at={68} src="notification-pop" volume={0.45} />
 		</AbsoluteFill>
 	);
 };
 
 const S9Cta: React.FC = () => {
 	const f = useCurrentFrame();
-	const a = useSp(14, 12, 180);
-	const b = useSp(30, 12, 180);
+	const a = useSp(8, 12, 180);
+	const b = useSp(82, 12, 180);
+	const link = useSp(136, 10, 200);
+	const rem = useSp(150, 12, 180);
 	return (
 		<AbsoluteFill>
 			<Waves />
 			<Brand />
-			<Headline a="Забери свой месяц" b="прямо сейчас" top={250} size={96} />
-			<div style={{position: 'absolute', top: 560, left: 90, right: 90, display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 26}}>
+			<Headline a="Забери свой месяц" b="прямо сейчас" top={250} size={84} />
+			<div style={{position: 'absolute', top: 600, left: 80, right: 80, display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 30}}>
 				<div style={{scale: String(a), opacity: a}}>
-					<Glass style={{padding: '34px 40px', display: 'flex', alignItems: 'center', gap: 28}}>
+					<Glass style={{padding: '38px 44px', display: 'flex', alignItems: 'center', gap: 30}}>
 						<Ico k="tg" />
 						<div>
-							<div style={{fontFamily: font, fontWeight: 800, fontSize: 36, color: '#5b6a8a'}}>Найди бота в Telegram</div>
-							<div style={{fontFamily: font, fontWeight: 900, fontSize: 70, color: BLUE}}>@horzvpnbot</div>
+							<div style={{fontFamily: font, fontWeight: 800, fontSize: 38, color: '#5b6a8a'}}>Найди бота в Telegram</div>
+							<div style={{fontFamily: font, fontWeight: 900, fontSize: 76, color: BLUE}}>@horzvpnbot</div>
 						</div>
 					</Glass>
 				</div>
-				<div style={{textAlign: 'center', fontFamily: font, fontWeight: 900, fontSize: 48, color: '#8a99b8', opacity: b}}>или</div>
+				<div style={{textAlign: 'center', fontFamily: font, fontWeight: 900, fontSize: 50, color: '#8a99b8', opacity: b}}>или</div>
 				<div style={{scale: String(b), opacity: b}}>
-					<Glass style={{padding: '34px 40px', display: 'flex', alignItems: 'center', gap: 28}}>
-						<div style={{width: 110, height: 110, borderRadius: 55, background: 'linear-gradient(180deg,#1a9bff,#0b5fe8)', color: '#fff', fontFamily: font, fontWeight: 900, fontSize: 96, lineHeight: '104px', textAlign: 'center', scale: String(1 + 0.06 * Math.sin(f / 4)), boxShadow: '0 12px 30px rgba(11,95,232,0.4)'}}>+</div>
+					<Glass style={{padding: '38px 44px', display: 'flex', alignItems: 'center', gap: 30, boxShadow: `0 30px 80px rgba(11,95,232,0.18), 0 0 0 ${link * (8 + 6 * Math.sin(f / 5))}px rgba(26,124,245,0.18)`}}>
+						<div style={{width: 120, height: 120, borderRadius: 60, background: 'linear-gradient(180deg,#1a9bff,#0b5fe8)', color: '#fff', fontFamily: font, fontWeight: 900, fontSize: 104, lineHeight: '112px', textAlign: 'center', flexShrink: 0, scale: String(1 + 0.06 * Math.sin(f / 4)), boxShadow: '0 12px 30px rgba(11,95,232,0.4)'}}>+</div>
 						<div>
-							<div style={{fontFamily: font, fontWeight: 900, fontSize: 56, color: NAVY, lineHeight: 1.1}}>Напиши «+»</div>
-							<div style={{fontFamily: font, fontWeight: 800, fontSize: 38, color: '#5b6a8a'}}>в комментариях — пришлём ссылку</div>
+							<div style={{fontFamily: font, fontWeight: 900, fontSize: 62, color: NAVY, lineHeight: 1.1}}>Напиши «+»</div>
+							<div style={{fontFamily: font, fontWeight: 800, fontSize: 40, color: '#5b6a8a'}}>в комментариях</div>
+							<div style={{fontFamily: font, fontWeight: 900, fontSize: 44, color: BLUE, opacity: link, translate: `0 ${(1 - link) * 20}px`}}>пришлём ссылку</div>
 						</div>
 					</Glass>
 				</div>
 			</div>
-			<RobotAt id="ct2" x={540} bottom={1800} size={400} pose={{armR: 150, armL: 150, wave: Math.sin(f / 4) * 25, eyes: f % 60 < 30 ? 'happy' : 'wink', blink: 1}} />
-			<Sfx at={14} src="notification-pop" volume={0.45} />
-			<Sfx at={30} src="notification-pop" volume={0.45} />
+			<div style={{position: 'absolute', top: 1300, width: '100%', display: 'flex', justifyContent: 'center', opacity: rem, translate: `0 ${(1 - rem) * 40}px`}}>
+				<div style={{fontFamily: font, fontWeight: 900, fontSize: 42, whiteSpace: 'nowrap', color: '#fff', background: 'linear-gradient(180deg,#1a9bff,#0b5fe8)', borderRadius: 40, padding: '20px 40px', boxShadow: '0 16px 40px rgba(11,95,232,0.4)'}}>Месяц · 100 ГБ · 2 устройства</div>
+			</div>
+			<Sfx at={8} src="notification-pop" volume={0.45} />
+			<Sfx at={82} src="notification-pop" volume={0.45} />
+			<Sfx at={136} src="success-chime" volume={0.4} />
 		</AbsoluteFill>
 	);
 };
 
 const SCENES: {C: React.FC; d: number; t?: 'slide' | 'wipe' | 'up'}[] = [
-	{C: S1Hook, d: 90},
-	{C: S2Offer, d: 105, t: 'slide'},
-	{C: S3NoLogs, d: 120, t: 'up'},
-	{C: S4Speed, d: 105, t: 'slide'},
-	{C: S5Stable, d: 105, t: 'wipe'},
-	{C: S6Ai, d: 95, t: 'slide'},
-	{C: S7HowTo, d: 270, t: 'up'},
-	{C: S8Terms, d: 90, t: 'slide'},
-	{C: S9Cta, d: 130, t: 'up'},
+	{C: S1Hook, d: 112},
+	{C: S2Offer, d: 91, t: 'slide'},
+	{C: S3NoLogs, d: 138, t: 'up'},
+	{C: S4Speed, d: 127, t: 'slide'},
+	{C: S5Stable, d: 145, t: 'wipe'},
+	{C: S6Ai, d: 96, t: 'slide'},
+	{C: S7HowTo, d: 238, t: 'up'},
+	{C: S8Terms, d: 108, t: 'slide'},
+	{C: S9Cta, d: 214, t: 'up'},
 ];
 
 export const MONTH_FRAMES = SCENES.reduce((a, s) => a + s.d, 0);
@@ -475,5 +529,6 @@ export const Month: React.FC = () => (
 				</React.Fragment>
 			))}
 		</TransitionSeries>
+		<Audio src={staticFile('giveaway/voice.mp3')} />
 	</AbsoluteFill>
 );
