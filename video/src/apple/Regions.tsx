@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Img, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import map from './russia.json';
 import {ACCENT, AppleBg, GRAY, INK, INOUT, IT, Lockup, OUT, SUB, clamp, prog} from './kit';
 
@@ -9,25 +9,33 @@ export const REGIONS_FRAMES = Math.ceil((T_END + 1.2) * RG_FPS);
 
 const CFO = ['Белгородская область', 'Брянская область', 'Владимирская область', 'Воронежская область', 'Ивановская область', 'Калужская область', 'Костромская область', 'Курская область', 'Липецкая область', 'Московская область', 'Орловская область', 'Рязанская область', 'Смоленская область', 'Тамбовская область', 'Тверская область', 'Тульская область', 'Ярославская область', 'Москва'];
 
-type Item = {t: number; regions: string[]; n?: number; title?: string; stat?: string; label?: string; sub?: string; maxZoom?: number};
+const CFO_FLAGS = ['bel', 'bry', 'vla', 'vor', 'iva', 'klu', 'kos', 'krs', 'lip', 'mos', 'orl', 'rya', 'smo', 'tam', 'tve', 'tul', 'yar', 'mow'];
+
+const Flag: React.FC<{code: string; h: number}> = ({code, h}) => (
+	<div style={{height: h, width: h * 1.5, borderRadius: h * 0.14, overflow: 'hidden', boxShadow: '0 8px 20px rgba(20,40,90,0.25), 0 0 0 3px #ffffff', flexShrink: 0, background: '#fff'}}>
+		<Img src={staticFile(`flags/${code}.svg`)} style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}} />
+	</div>
+);
+
+type Item = {t: number; regions: string[]; flags?: string[]; n?: number; title?: string; stat?: string; label?: string; sub?: string; maxZoom?: number};
 
 const items: Item[] = [
 	{t: 0, regions: []},
-	{t: 7.06, regions: ['Белгородская область'], n: 1, title: 'Белгородская область', stat: '88%', label: 'подключений — по белым спискам'},
-	{t: 12.49, regions: ['Курская область'], n: 2, title: 'Курская область', stat: '1 из 8', label: 'подключений без ограничений'},
-	{t: 18.12, regions: ['Брянская область'], n: 3, title: 'Брянская область', stat: '12%', label: 'сессий без ограничений'},
-	{t: 22.48, regions: ['Воронежская область'], n: 4, title: 'Воронежская область', stat: '−40%', label: 'мобильного трафика'},
-	{t: 27.06, regions: ['Ивановская область'], n: 5, title: 'Ивановская область', stat: '−40%', label: 'мобильного трафика'},
-	{t: 31.46, regions: ['Краснодарский край'], n: 6, title: 'Краснодарский край', stat: '−40%', label: 'мобильного трафика'},
-	{t: 35.5, regions: ['Москва', 'Московская область'], n: 7, title: 'Москва и Подмосковье', stat: '3 недели', label: 'без мобильного интернета в марте', sub: 'Сейчас без ограничений — меньше половины подключений'},
-	{t: 43.82, regions: ['Санкт-Петербург'], n: 8, title: 'Санкт-Петербург', stat: '44%', label: 'сессий без ограничений', maxZoom: 22},
-	{t: 48.46, regions: ['Ленинградская область'], n: 9, title: 'Ленинградская область', stat: '59%', label: 'подключений проходят свободно'},
-	{t: 53.39, regions: CFO, n: 10, title: 'Центральная Россия', stat: '1 из 3', label: 'подключений без ограничений'},
+	{t: 7.06, regions: ['Белгородская область'], flags: ['bel'], n: 1, title: 'Белгородская область', stat: '88%', label: 'подключений — по белым спискам'},
+	{t: 12.49, regions: ['Курская область'], flags: ['krs'], n: 2, title: 'Курская область', stat: '1 из 8', label: 'подключений без ограничений'},
+	{t: 18.12, regions: ['Брянская область'], flags: ['bry'], n: 3, title: 'Брянская область', stat: '12%', label: 'сессий без ограничений'},
+	{t: 22.48, regions: ['Воронежская область'], flags: ['vor'], n: 4, title: 'Воронежская область', stat: '−40%', label: 'мобильного трафика'},
+	{t: 27.06, regions: ['Ивановская область'], flags: ['iva'], n: 5, title: 'Ивановская область', stat: '−40%', label: 'мобильного трафика'},
+	{t: 31.46, regions: ['Краснодарский край'], flags: ['kda'], n: 6, title: 'Краснодарский край', stat: '−40%', label: 'мобильного трафика'},
+	{t: 35.5, regions: ['Москва', 'Московская область'], flags: ['mow', 'mos'], n: 7, title: 'Москва и Подмосковье', stat: '3 недели', label: 'без мобильного интернета в марте', sub: 'Сейчас без ограничений — меньше половины подключений'},
+	{t: 43.82, regions: ['Санкт-Петербург'], flags: ['spe'], n: 8, title: 'Санкт-Петербург', stat: '44%', label: 'сессий без ограничений', maxZoom: 22},
+	{t: 48.46, regions: ['Ленинградская область'], flags: ['len'], n: 9, title: 'Ленинградская область', stat: '59%', label: 'подключений проходят свободно'},
+	{t: 53.39, regions: CFO, flags: CFO_FLAGS, n: 10, title: 'Центральная Россия', stat: '1 из 3', label: 'подключений без ограничений'},
 	{t: 59.0, regions: []},
 ];
 
 const TOP10 = items.flatMap((it) => (it.n && it.n < 10 ? it.regions : []));
-const byName: Record<string, {d: string; bbox: number[]}> = Object.fromEntries(map.regions.map((r) => [r.name, r]));
+const byName: Record<string, {d: string; bbox: number[]; c: number[]}> = Object.fromEntries(map.regions.map((r) => [r.name, r]));
 
 const MAP_CX = 540;
 const MAP_CY = 760;
@@ -64,7 +72,10 @@ const MapLayer: React.FC = () => {
 	const active = items[k].regions;
 	const endAll = k === items.length - 1;
 	const drawP = interpolate(t - items[k].t, [0.5, 1.9], [0, 1], {...clamp, easing: OUT});
+	const flags = items[k].flags ?? [];
+	const many = flags.length > 2;
 	return (
+		<>
 		<svg width={1080} height={1920} style={{position: 'absolute', inset: 0}}>
 			<defs>
 				<filter id="rgShadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -94,6 +105,22 @@ const MapLayer: React.FC = () => {
 				))}
 			</g>
 		</svg>
+		{flags.map((code, i) => {
+			const name = active[i];
+			if (!name || (many && name === 'Москва')) return null;
+			const [fx, fy] = byName[name].c;
+			const x = MAP_CX + (fx - cx) * z;
+			const y = MAP_CY + (fy - cy) * z;
+			const h = many ? 30 : 84;
+			const at = 1.0 + (many ? i * 0.05 : i * 0.15);
+			const p = interpolate(t - items[k].t, [at, at + 0.45], [0, 1], {...clamp, easing: OUT});
+			return (
+				<div key={code} style={{position: 'absolute', left: x, top: y, translate: '-50% -50%', opacity: p, scale: String(0.6 + 0.4 * p)}}>
+					<Flag code={code} h={h} />
+				</div>
+			);
+		})}
+		</>
 	);
 };
 
@@ -108,8 +135,8 @@ const Card: React.FC<{it: Item; start: number; end: number}> = ({it, start, end}
 		<div style={{position: 'absolute', left: 70, right: 70, top: 1250, opacity: p, translate: `0 ${(1 - inP) * 40}px`, filter: p < 0.99 ? `blur(${(1 - p) * 8}px)` : undefined}}>
 			<div style={{background: 'rgba(255,255,255,0.9)', borderRadius: 44, padding: '40px 48px', boxShadow: '0 30px 80px rgba(20,40,90,0.14)', fontFamily: IT}}>
 				<div style={{display: 'flex', alignItems: 'center', gap: 18}}>
-					<div style={{width: 64, height: 64, borderRadius: 32, background: INK, color: '#fff', fontSize: 30, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{it.n}</div>
-					<div style={{fontSize: 46, fontWeight: 600, color: INK, letterSpacing: -1}}>{it.title}</div>
+					<div style={{width: 56, height: 56, borderRadius: 28, background: INK, color: '#fff', fontSize: 28, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{it.n}</div>
+					<div style={{fontSize: 46, fontWeight: 600, color: INK, letterSpacing: -1, lineHeight: 1.1}}>{it.title}</div>
 				</div>
 				<div style={{display: 'flex', alignItems: 'baseline', gap: 20, marginTop: 22, flexWrap: 'wrap'}}>
 					<div style={{fontSize: 128, fontWeight: 600, color: ACCENT, letterSpacing: -5, lineHeight: 1}}>{it.stat}</div>
