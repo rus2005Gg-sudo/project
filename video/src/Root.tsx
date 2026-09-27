@@ -12,7 +12,7 @@ import {StyleFrames} from './style/StyleFrames';
 import {Avatar} from './profile/Avatar';
 import {TEAM_FPS, TEAM_FRAMES, Team} from './apple/Team';
 import {REGIONS_FRAMES, RG_FPS, Regions} from './apple/Regions';
-import {BANNER_LOOP, Banner} from './apple/Banner';
+import {BANNER_FRAMES, Banner} from './apple/Banner';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -25,7 +25,7 @@ export const Root: React.FC = () => (
 		<Composition id="MonthApple" component={MonthApple} durationInFrames={MONTH_APPLE_FRAMES} fps={MA_FPS} width={1080} height={1920} />
 		<Composition id="Challenge" component={Challenge} durationInFrames={CHALLENGE_FRAMES} fps={CH_FPS} width={1080} height={1920} />
 		<Composition id="Regions" component={Regions} durationInFrames={REGIONS_FRAMES} fps={RG_FPS} width={1080} height={1920} />
-		<Composition id="Banner" component={Banner} durationInFrames={BANNER_LOOP} fps={30} width={1080} height={480} />
+		<Composition id="Banner" component={Banner} durationInFrames={BANNER_FRAMES} fps={30} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
