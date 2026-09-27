@@ -8,7 +8,7 @@ const D = [66, 84, 120];
 export const BANNER_FRAMES = D.reduce((a, b) => a + b, 0);
 
 const Center: React.FC<{children: React.ReactNode}> = ({children}) => (
-	<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>{children}</AbsoluteFill>
+	<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 70}}>{children}</AbsoluteFill>
 );
 
 // 1 — icon + "раздаёт подписки"
@@ -16,11 +16,12 @@ const S1: React.FC = () => (
 	<Drift dur={D[0] + TR}>
 		<AppleBg />
 		<Center>
-			<AppIcon size={340} at={0} />
-			<div style={{height: 90}} />
-			<Eyebrow at={10}>Horz VPN раздаёт</Eyebrow>
-			<div style={{height: 24}} />
-			<Lines at={16} size={104} lines={['подписки', 'бесплатно']} colors={[INK, ACCENT]} />
+			<AppIcon size={300} at={0} />
+			<div>
+				<Rise at={10} dist={16}><div style={{fontFamily: IT, fontSize: 38, fontWeight: 500, color: ACCENT}}>Horz VPN раздаёт</div></Rise>
+				<div style={{height: 16}} />
+				<Lines at={16} size={110} align="left" lines={['подписки', 'бесплатно']} colors={[INK, ACCENT]} />
+			</div>
 		</Center>
 	</Drift>
 );
@@ -32,16 +33,17 @@ const S2: React.FC = () => {
 	return (
 		<Drift dur={D[1] + TR}>
 			<AppleBg />
-			<Lockup />
 			<Center>
 				<Rise at={0} dist={60}>
-					<div style={{fontFamily: IT, fontSize: 420, fontWeight: 700, color: INK, letterSpacing: -22, lineHeight: 1}}>
+					<div style={{fontFamily: IT, fontSize: 360, fontWeight: 700, color: INK, letterSpacing: -18, lineHeight: 1}}>
 						<Count to={30} at={4} dur={40} />
 					</div>
 				</Rise>
-				<Lines at={14} size={92} lines={['дней', 'бесплатно']} colors={[INK, ACCENT]} />
-				<div style={{width: 560, height: 10, borderRadius: 10, background: '#e5e5ea', marginTop: 70, overflow: 'hidden'}}>
-					<div style={{width: `${bar * 100}%`, height: '100%', borderRadius: 10, background: `linear-gradient(90deg,${ACCENT},#5ac8fa)`}} />
+				<div>
+					<Lines at={14} size={110} align="left" lines={['дней', 'бесплатно']} colors={[INK, ACCENT]} />
+					<div style={{width: 460, height: 10, borderRadius: 10, background: '#e5e5ea', marginTop: 40, overflow: 'hidden'}}>
+						<div style={{width: `${bar * 100}%`, height: '100%', borderRadius: 10, background: `linear-gradient(90deg,${ACCENT},#5ac8fa)`}} />
+					</div>
 				</div>
 			</Center>
 		</Drift>
@@ -63,17 +65,15 @@ const S3: React.FC = () => {
 		<Drift dur={D[2]}>
 			<AppleBg />
 			<Center>
-				<AppIcon size={220} at={0} />
-				<div style={{height: 80}} />
-				<Eyebrow at={6}>Забирай прямо сейчас</Eyebrow>
-				<div style={{height: 24}} />
-				<Lines at={10} size={110} lines={['Ищи в', 'Telegram']} colors={[INK, ACCENT]} />
-				<div style={{height: 90}} />
+				<AppIcon size={200} at={0} />
+				<div>
+					<Lines at={10} size={96} align="left" lines={['Ищи в', 'Telegram']} colors={[INK, ACCENT]} />
+				</div>
 				<Rise at={24} dist={40}>
 					<div style={{position: 'relative', scale: String(pillScale)}}>
 						{ring(52)}
 						{ring(88)}
-						<BlackPill style={{fontSize: 58, fontWeight: 600, padding: '38px 76px', borderRadius: 80}}>@horzvpnbot</BlackPill>
+						<BlackPill style={{fontSize: 54, fontWeight: 600, padding: '34px 64px', borderRadius: 80}}>@horzvpnbot</BlackPill>
 					</div>
 				</Rise>
 			</Center>

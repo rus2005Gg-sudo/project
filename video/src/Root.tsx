@@ -25,13 +25,13 @@ export const Root: React.FC = () => (
 		<Composition id="MonthApple" component={MonthApple} durationInFrames={MONTH_APPLE_FRAMES} fps={MA_FPS} width={1080} height={1920} />
 		<Composition id="Challenge" component={Challenge} durationInFrames={CHALLENGE_FRAMES} fps={CH_FPS} width={1080} height={1920} />
 		<Composition id="Regions" component={Regions} durationInFrames={REGIONS_FRAMES} fps={RG_FPS} width={1080} height={1920} />
-		<Composition id="Banner" component={Banner} durationInFrames={BANNER_FRAMES} fps={30} width={1080} height={1920} />
+		<Composition id="Banner" component={Banner} durationInFrames={BANNER_FRAMES} fps={30} width={1536} height={640} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
 		<Composition id="Month" component={Month} durationInFrames={MONTH_FRAMES} fps={M_FPS} width={1080} height={1920} />
 		<Composition id="Giveaway" component={Giveaway} durationInFrames={GIVEAWAY_FRAMES} fps={G_FPS} width={1080} height={1920} />
 		<Composition id="RobotTest" component={RobotTest} durationInFrames={1} fps={30} width={1080} height={960} />
-		<Composition id="PoseTest" component={PoseTest} durationInFrames={1} fps={30} width={1080} height={1920} />
+		<Composition id="PoseTest" component={PoseTest} durationInFrames={1} fps={30} width={1536} height={640} />
 	</>
 );
