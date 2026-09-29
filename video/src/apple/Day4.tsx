@@ -201,29 +201,10 @@ const S6: React.FC = () => {
 							<div style={{width: 76, height: 76, borderRadius: 38, background: INK, color: '#fff', fontFamily: IT, fontSize: 38, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1</div>
 							<div style={{fontFamily: IT, fontSize: 50, fontWeight: 600, color: INK}}>Ссылка в профиле</div>
 						</div>
-						<div style={{display: 'flex', alignItems: 'center', gap: 28, marginTop: 34, padding: 30, borderRadius: 30, background: '#f5f5f7'}}>
-							<div style={{width: 120, height: 120, borderRadius: 60, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 16px rgba(0,0,0,0.08)'}}>
-								<Img src={LOGO} style={{width: 70}} />
-							</div>
-							<div style={{fontFamily: IT}}>
-								<div style={{fontSize: 46, fontWeight: 700, color: INK}}>horz vpn</div>
-								<div style={{fontSize: 30, color: GRAY, marginTop: 4}}>@horz.vpn</div>
-								<div
-									style={{
-										display: 'inline-block',
-										marginTop: 14,
-										fontSize: 38,
-										fontWeight: 600,
-										color: hl > 0.5 ? '#fff' : INK,
-										background: `rgba(0,113,227,${hl})`,
-										padding: '6px 16px',
-										borderRadius: 14,
-										scale: String(tap),
-									}}
-								>
-									t.me/horzvpn
-								</div>
-							</div>
+						<div style={{position: 'relative', marginTop: 30, borderRadius: 28, overflow: 'hidden', boxShadow: '0 0 0 2px #e5e5ea'}}>
+							<Img src={staticFile('day4/profile.png')} style={{width: '100%', display: 'block'}} />
+							<div style={{position: 'absolute', left: 18, top: 522, width: 300, height: 62, borderRadius: 16, border: `5px solid ${ACCENT}`, background: `rgba(0,113,227,${hl * 0.12})`, opacity: hl, scale: String(tap * interpolate(hl, [0, 1], [1.3, 1]))}} />
+							<div style={{position: 'absolute', left: 230, top: 518, width: 70, height: 70, borderRadius: 35, background: 'rgba(0,0,0,0.25)', border: '4px solid #fff', opacity: interpolate(f - linkAt, [-8, 0, 16, 26], [0, 1, 1, 0], clamp), scale: String(interpolate(f - linkAt, [-8, 0, 6], [1.4, 1, 0.85], clamp))}} />
 						</div>
 					</Card>
 				</Rise>
