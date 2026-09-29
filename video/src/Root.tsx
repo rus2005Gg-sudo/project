@@ -16,6 +16,7 @@ import {BANNER_FRAMES, Banner} from './apple/Banner';
 import {D3_FPS, DAY3_FRAMES, Day3} from './apple/Day3';
 import {ISP_FPS, ISP_FRAMES, Isp} from './apple/Isp';
 import {D4_FPS, DAY4_FRAMES, Day4} from './apple/Day4';
+import {AN_FPS, ANON_FRAMES, Anon} from './apple/Anon';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -32,6 +33,7 @@ export const Root: React.FC = () => (
 		<Composition id="Day3" component={Day3} durationInFrames={DAY3_FRAMES} fps={D3_FPS} width={1080} height={1920} />
 		<Composition id="Isp" component={Isp} durationInFrames={ISP_FRAMES} fps={ISP_FPS} width={1080} height={1920} />
 		<Composition id="Day4" component={Day4} durationInFrames={DAY4_FRAMES} fps={D4_FPS} width={1080} height={1920} />
+		<Composition id="Anon" component={Anon} durationInFrames={ANON_FRAMES} fps={AN_FPS} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
