@@ -71,24 +71,27 @@ const ICONS: {bg: string; glyph: React.ReactNode}[] = [
 	},
 ];
 
-const SIZE = 118;
-const GAP = 44;
+const SIZE = 140;
+const GAP = 40;
 const STEP = SIZE + GAP;
 
 /** endless slot-style strip of app icons; `fixed` 0..1 turns them from blocked to working */
 const Roulette: React.FC<{f: number; fixed: number}> = ({f, fixed}) => {
 	const span = ICONS.length * STEP;
-	const off = ((f / BW_LOOP) * span * 2) % span; // two full turns per loop → seamless
+	// slot-machine: snaps one icon per step so an icon lands in the centre frame; 7 steps = one full turn → seamless
+	const per = BW_LOOP / ICONS.length;
+	const k = Math.floor(f / per);
+	const off = (k + interpolate(f - k * per, [0, 12], [0, 1], {...clamp, easing: OUT})) * STEP;
 	const items = [];
-	for (let r = -1; r < 3; r++) {
+	for (let r = -1; r < 4; r++) {
 		ICONS.forEach((ic, i) => {
-			const x = r * span + i * STEP - off;
+			const x = r * span + i * STEP - off + ((640 - SIZE / 2) % STEP);
 			const cx = x + SIZE / 2 - 640;
 			const d = Math.min(1, Math.abs(cx) / 640);
-			const sc = 1.22 - d * 0.42;
+			const sc = 1.12 - Math.min(1, d * 3) * 0.24;
 			if (x < -STEP || x > 1280 + STEP) return;
 			items.push(
-				<div key={`${r}-${i}`} style={{position: 'absolute', left: x, top: 0, width: SIZE, height: SIZE, scale: String(sc)}}>
+				<div key={`${r}-${i}`} style={{position: 'absolute', left: x, top: 50, width: SIZE, height: SIZE, scale: String(sc)}}>
 					<div
 						style={{
 							width: '100%',
@@ -131,19 +134,20 @@ const Roulette: React.FC<{f: number; fixed: number}> = ({f, fixed}) => {
 		});
 	}
 	return (
-		<div style={{position: 'absolute', left: 0, right: 0, top: 515, height: SIZE, WebkitMaskImage: 'linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)'}}>
-			{items}
-		</div>
+		<>
+			<div style={{position: 'absolute', left: 0, right: 0, top: 430, height: SIZE + 100, WebkitMaskImage: 'linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent)'}}>{items}</div>
+			<div style={{position: 'absolute', left: 640 - 108, top: 430 + 50 + SIZE / 2 - 108, width: 216, height: 216, borderRadius: 56, border: `5px solid ${fixed > 0.5 ? GREEN : RED}`, boxShadow: `0 0 40px ${fixed > 0.5 ? 'rgba(52,199,89,0.35)' : 'rgba(255,59,48,0.25)'}`}} />
+		</>
 	);
 };
 
 /** one line of text that rises in and fades out inside [a, b] */
 const Beat: React.FC<{f: number; a: number; b: number; children: React.ReactNode}> = ({f, a, b, children}) => {
-	const pin = prog(f, a, 16, OUT);
-	const pout = prog(f, b - 12, 12);
+	const pin = prog(f, a, 10, OUT);
+	const pout = prog(f, b - 6, 6);
 	const o = pin * (1 - pout);
 	return (
-		<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', paddingBottom: 200, opacity: o, translate: `0 ${(1 - pin) * 30 - pout * 20}px`, filter: o < 0.98 ? `blur(${(1 - o) * 8}px)` : undefined}}>
+		<AbsoluteFill style={{alignItems: 'center', justifyContent: 'flex-start', paddingTop: 70, opacity: o, translate: `0 ${(1 - pin) * 30 - pout * 20}px`, filter: o < 0.98 ? `blur(${(1 - o) * 8}px)` : undefined}}>
 			{children}
 		</AbsoluteFill>
 	);
