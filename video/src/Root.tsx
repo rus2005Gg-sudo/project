@@ -18,6 +18,7 @@ import {ISP_FPS, ISP_FRAMES, Isp} from './apple/Isp';
 import {D4_FPS, DAY4_FRAMES, Day4} from './apple/Day4';
 import {AN_FPS, ANON_FRAMES, Anon} from './apple/Anon';
 import {BW_LOOP, BotWelcome} from './apple/BotWelcome';
+import {HI_FPS, HIST_FRAMES, History} from './apple/History';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -36,6 +37,7 @@ export const Root: React.FC = () => (
 		<Composition id="Day4" component={Day4} durationInFrames={DAY4_FRAMES} fps={D4_FPS} width={1080} height={1920} />
 		<Composition id="Anon" component={Anon} durationInFrames={ANON_FRAMES} fps={AN_FPS} width={1080} height={1920} />
 		<Composition id="BotWelcome" component={BotWelcome} durationInFrames={BW_LOOP} fps={30} width={1280} height={720} />
+		<Composition id="History" component={History} durationInFrames={HIST_FRAMES} fps={HI_FPS} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
