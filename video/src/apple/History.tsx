@@ -46,7 +46,7 @@ const Pop: React.FC<{at: number; children: React.ReactNode; style?: React.CSSPro
 
 const GREEN = '#34c759';
 const Page: React.FC<{children: React.ReactNode; gap?: number; justify?: React.CSSProperties['justifyContent']}> = ({children, gap = 0, justify = 'center'}) => (
-	<AbsoluteFill style={{padding: '170px 130px 360px 70px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: justify, gap}}>{children}</AbsoluteFill>
+	<AbsoluteFill style={{padding: '290px 100px 360px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: justify, gap}}>{children}</AbsoluteFill>
 );
 
 
@@ -96,7 +96,7 @@ const Tracked: React.FC<{src: string; iw: number; ih: number; w: number; h: numb
 
 /** always-on brand mark, fixed (does not move with the camera) */
 const Watermark: React.FC = () => (
-	<div style={{position: 'absolute', top: 84, left: 0, right: 60, display: 'flex', justifyContent: 'center'}}>
+	<div style={{position: 'absolute', top: 190, left: 0, right: 0, display: 'flex', justifyContent: 'center'}}>
 		<div style={{display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.85)', padding: '12px 24px 12px 16px', borderRadius: 40, boxShadow: '0 8px 24px rgba(20,40,90,0.10)'}}>
 			<Img src={LOGO} style={{width: 40}} />
 			<span style={{fontFamily: IT, fontSize: 32, fontWeight: 700, color: INK, letterSpacing: -0.5}}>Horz VPN</span>
@@ -195,7 +195,7 @@ const S4: React.FC = () => {
 		<Drift dur={DUR[3] + TR}>
 			<AppleBg glow="255,59,48" />
 			<Page gap={28}>
-				<Tracked src="history/pc90.jpg" iw={827} ih={539} w={W} h={600} at={at(3, 12.6)} from={[430, 270, 1]} to={[270, 220, 1.45]} dur={fr(7.5)} targets={[{x: 180, y: 112, w: 150, h: 170, label: 'открытый текст', at: at(3, 17.3), color: RED}]}>
+				<Tracked src="history/pc90_hd.jpg" iw={827} ih={539} w={W} h={600} at={at(3, 12.6)} from={[430, 270, 1]} to={[270, 220, 1.45]} dur={fr(7.5)} targets={[{x: 180, y: 112, w: 150, h: 170, label: 'открытый текст', at: at(3, 17.3), color: RED}]}>
 					<div style={{position: 'absolute', left: 34, bottom: 20, fontFamily: IT, fontSize: 170, fontWeight: 700, color: '#fff', letterSpacing: -8, lineHeight: 1, textShadow: '0 6px 30px rgba(0,0,0,0.45)'}}>
 						<Roll from={2026} to={1993} a={at(3, 12.6)} b={at(3, 13.8)} />
 					</div>
@@ -254,12 +254,12 @@ const S5: React.FC = () => {
 		<Drift dur={DUR[4] + TR}>
 			<AppleBg />
 			<Page gap={24}>
-				<Tracked src="history/columbia.jpg" iw={827} ih={518} w={W} h={400} at={at(4, 20.5)} from={[413, 300, 1]} to={[413, 230, 1.5]} dur={fr(3)} targets={[{x: 325, y: 135, w: 175, h: 140, label: 'Колумбийский университет', at: at(4, 20.8)}]}>
+				<Tracked src="history/columbia_hd.jpg" iw={827} ih={518} w={W} h={400} at={at(4, 20.5)} from={[413, 300, 1]} to={[413, 230, 1.5]} dur={fr(3)} targets={[{x: 325, y: 135, w: 175, h: 140, label: 'Колумбийский университет', at: at(4, 20.8)}]}>
 					<div style={{position: 'absolute', right: 20, bottom: 20, background: INK, color: '#fff', fontFamily: IT, fontSize: 40, fontWeight: 700, padding: '12px 26px', borderRadius: 40, opacity: bl, scale: String(interpolate(bl, [0, 1], [0.8, 1]))}}>+ Bell Labs</div>
 				</Tracked>
 				<div style={{display: 'flex', gap: 26, alignItems: 'flex-start'}}>
-					<Photo src="history/p1.jpg" at={at(4, 23.7)} w={330} h={360} caption="Джон Иоаннидис" tilt={-2} pos="50% 30%" />
-					<Photo src="history/p2.jpg" at={at(4, 24.85)} w={330} h={360} caption="Мэтт Блейз" tilt={2} pos="50% 35%" />
+					<Photo src="history/p1_hd.jpg" at={at(4, 23.7)} w={330} h={360} caption="Джон Иоаннидис" tilt={-2} pos="50% 30%" />
+					<Photo src="history/p2_hd.jpg" at={at(4, 24.85)} w={330} h={360} caption="Мэтт Блейз" tilt={2} pos="50% 35%" />
 				</div>
 				<div style={{display: 'flex', alignItems: 'baseline', gap: 20}}>
 					<Pop at={at(4, 26.6)} style={{fontFamily: IT, fontSize: 130, fontWeight: 700, color: ACCENT, letterSpacing: -5, lineHeight: 1}}>
@@ -298,14 +298,14 @@ const S6: React.FC = () => {
 			<Page gap={30}>
 				<div style={{position: 'relative', width: W, height: 600}}>
 					<div style={{position: 'absolute', inset: 0, opacity: 1 - swap}}>
-						<Tracked src="history/ms90.jpg" iw={827} ih={515} w={W} h={600} at={at(5, 30.6)} from={[420, 260, 1]} to={[640, 190, 1.35]} dur={fr(1.8)} targets={[{x: 528, y: 118, w: 118, h: 118, label: 'Microsoft', at: at(5, 31.8)}]}>
+						<Tracked src="history/ms90_hd.jpg" iw={827} ih={515} w={W} h={600} at={at(5, 30.6)} from={[420, 260, 1]} to={[640, 190, 1.35]} dur={fr(1.8)} targets={[{x: 528, y: 118, w: 118, h: 118, label: 'Microsoft', at: at(5, 31.8)}]}>
 							<div style={{position: 'absolute', left: 30, bottom: 16, fontFamily: IT, fontSize: 160, fontWeight: 700, color: '#fff', letterSpacing: -7, lineHeight: 1, textShadow: '0 6px 30px rgba(0,0,0,0.45)'}}>
 								<Roll from={1993} to={1996} a={at(5, 30.7)} b={at(5, 31.5)} />
 							</div>
 						</Tracked>
 					</div>
 					<div style={{position: 'absolute', inset: 0, opacity: swap}}>
-						<Tracked src="history/p3.jpg" iw={350} ih={229} w={W} h={600} at={at(5, 32.2)} from={[175, 115, 1]} to={[250, 150, 1.25]} dur={fr(6)} targets={[]}>
+						<Tracked src="history/p3_hd.jpg" iw={350} ih={229} w={W} h={600} at={at(5, 32.2)} from={[175, 115, 1]} to={[250, 150, 1.25]} dur={fr(6)} targets={[]}>
 							<div style={{position: 'absolute', left: 0, right: 0, bottom: 0, padding: '60px 30px 22px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontFamily: IT, fontSize: 44, fontWeight: 700, color: '#fff'}}>
 								Гурдип Сингх Палл <span style={{fontWeight: 500, opacity: 0.8}}>и команда</span>
 							</div>
@@ -362,7 +362,7 @@ const S7: React.FC = () => {
 					<Lines at={at(6, 41.9)} size={76} weight={700} lines={['Сначала VPN был']} color={GRAY} />
 					<Lines at={at(6, 43.5)} size={88} weight={700} lines={['только для компаний']} />
 				</div>
-				<Tracked src="history/office90.jpg" iw={827} ih={591} w={W} h={520} at={at(6, 41.9)} from={[413, 300, 1]} to={[430, 330, 1.3]} dur={fr(5.5)} targets={[{x: 420, y: 300, w: 140, h: 125, label: 'рабочая сеть', at: at(6, 43.85)}]} />
+				<Tracked src="history/office90_hd.jpg" iw={827} ih={591} w={W} h={520} at={at(6, 41.9)} from={[413, 300, 1]} to={[430, 330, 1.3]} dur={fr(5.5)} targets={[{x: 420, y: 300, w: 140, h: 125, label: 'рабочая сеть', at: at(6, 43.85)}]} />
 				<div style={{position: 'relative', width: W, display: 'flex', justifyContent: 'space-between'}}>
 					<Building kind="home" label="Дом" at={at(6, 44.5)} />
 					<div style={{position: 'absolute', left: 200, right: 200, top: 75, height: 40, borderRadius: 20, background: 'rgba(0,113,227,0.1)', overflow: 'hidden', clipPath: `inset(0 ${(1 - t) * 100}% 0 0 round 20px)`, boxShadow: 'inset 0 0 0 3px rgba(0,113,227,0.4)'}}>
