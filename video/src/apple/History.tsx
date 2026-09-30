@@ -3,7 +3,7 @@ import '@fontsource/jetbrains-mono/500.css';
 import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {Img} from 'remotion';
-import {LOGO, ACCENT, AppIcon, AppleBg, BlackPill, Card, Drift, Eyebrow, GRAY, HAIR, INK, INOUT, IT, Lines, Lockup, Rise, SUB, blurZoom, clamp, prog} from './kit';
+import {LOGO, ACCENT, AppIcon, AppleBg, BlackPill, Card, Drift as KitDrift, Eyebrow, GRAY, HAIR, INK, INOUT, IT, Lines, Lockup, Rise, SUB, blurZoom, clamp, prog} from './kit';
 
 export const HI_FPS = 30;
 const VOICE = 60.1;
@@ -37,7 +37,7 @@ const Pop: React.FC<{at: number; children: React.ReactNode; style?: React.CSSPro
 	const f = useCurrentFrame();
 	const p = prog(f, a, 22);
 	return (
-		<span style={{display: 'inline-block', opacity: p, scale: String(interpolate(p, [0, 1], [0.75, 1])), filter: p < 0.99 ? `blur(${(1 - p) * 12}px)` : undefined, ...style}}>
+		<span style={{display: 'inline-block', opacity: p, scale: String(interpolate(p, [0, 1], [0.9, 1])), filter: p < 0.99 ? `blur(${(1 - p) * 10}px)` : undefined, ...style}}>
 			{children}
 		</span>
 	);
@@ -51,6 +51,58 @@ const Page: React.FC<{children: React.ReactNode; gap?: number; justify?: React.C
 
 
 const RED = '#ff3b30';
+// calmer camera: much smaller push-in than the kit default
+const Drift: React.FC<{dur: number; children: React.ReactNode; amount?: number}> = ({dur, children}) => <KitDrift dur={dur} amount={0.012}>{children}</KitDrift>;
+
+type Target = {x: number; y: number; w: number; h: number; label: string; at: number; color?: string};
+/** photo with a slow camera move; boxes are pinned to image coordinates so they "track" objects as the camera moves */
+const Tracked: React.FC<{src: string; iw: number; ih: number; w: number; h: number; at: number; from: [number, number, number]; to: [number, number, number]; dur: number; targets?: Target[]; children?: React.ReactNode}> = ({src, iw, ih, w, h, at: a, from, to, dur, targets = [], children}) => {
+	const f = useCurrentFrame();
+	const p = prog(f, a, 20);
+	const m = interpolate(f - a, [0, dur], [0, 1], {...clamp, easing: INOUT});
+	const cx = from[0] + (to[0] - from[0]) * m;
+	const cy = from[1] + (to[1] - from[1]) * m;
+	const z = from[2] + (to[2] - from[2]) * m;
+	const S = Math.max(w / iw, h / ih) * z;
+	// keep the image covering the frame while the camera tracks
+	const tx = Math.min(0, Math.max(w - iw * S, w / 2 - cx * S));
+	const ty = Math.min(0, Math.max(h - ih * S, h / 2 - cy * S));
+	return (
+		<div style={{position: 'relative', width: w, height: h, borderRadius: 30, overflow: 'hidden', boxShadow: '0 30px 70px rgba(20,40,90,0.18)', opacity: p, translate: `0 ${(1 - p) * 50}px`}}>
+			<div style={{position: 'absolute', left: 0, top: 0, width: iw, height: ih, transformOrigin: '0 0', transform: `translate(${tx}px, ${ty}px) scale(${S})`}}>
+				<Img src={staticFile(src)} style={{width: iw, height: ih, display: 'block'}} />
+				{targets.map((t, i) => {
+					const q = prog(f, t.at, 12);
+					const c = t.color ?? ACCENT;
+					const bw = 4 / S;
+					const L = 22 / S;
+					const corner = (st: React.CSSProperties) => <div style={{position: 'absolute', width: L, height: L, borderColor: c, borderStyle: 'solid', borderWidth: 0, ...st}} />;
+					return (
+						<div key={i} style={{position: 'absolute', left: t.x, top: t.y, width: t.w, height: t.h, opacity: q, scale: String(interpolate(q, [0, 1], [1.25, 1]))}}>
+							<div style={{position: 'absolute', inset: 0, background: `${c}1f`, borderRadius: 6 / S}} />
+							{corner({left: 0, top: 0, borderLeftWidth: bw, borderTopWidth: bw})}
+							{corner({right: 0, top: 0, borderRightWidth: bw, borderTopWidth: bw})}
+							{corner({left: 0, bottom: 0, borderLeftWidth: bw, borderBottomWidth: bw})}
+							{corner({right: 0, bottom: 0, borderRightWidth: bw, borderBottomWidth: bw})}
+							<div style={{position: 'absolute', left: 0, top: -44 / S, transformOrigin: '0 0', scale: String(1 / S), background: c, color: '#fff', fontFamily: IT, fontSize: 30, fontWeight: 700, padding: '6px 14px', borderRadius: 10, whiteSpace: 'nowrap'}}>{t.label}</div>
+						</div>
+					);
+				})}
+			</div>
+			{children}
+		</div>
+	);
+};
+
+/** always-on brand mark, fixed (does not move with the camera) */
+const Watermark: React.FC = () => (
+	<div style={{position: 'absolute', top: 84, left: 0, right: 60, display: 'flex', justifyContent: 'center'}}>
+		<div style={{display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.85)', padding: '12px 24px 12px 16px', borderRadius: 40, boxShadow: '0 8px 24px rgba(20,40,90,0.10)'}}>
+			<Img src={LOGO} style={{width: 40}} />
+			<span style={{fontFamily: IT, fontSize: 32, fontWeight: 700, color: INK, letterSpacing: -0.5}}>Horz VPN</span>
+		</div>
+	</div>
+);
 const W = 880; // usable width inside the TikTok safe zone
 const MONO = '"JetBrains Mono", ui-monospace, monospace';
 
@@ -58,7 +110,7 @@ const MONO = '"JetBrains Mono", ui-monospace, monospace';
 const Photo: React.FC<{src: string; at: number; w: number; h: number; caption?: React.ReactNode; tilt?: number; pos?: string}> = ({src, at: a, w, h, caption, tilt = 0, pos = 'center'}) => {
 	const f = useCurrentFrame();
 	const p = prog(f, a, 22);
-	const kb = interpolate(f - a, [0, 240], [1.04, 1.16], clamp);
+	const kb = interpolate(f - a, [0, 240], [1.02, 1.08], clamp);
 	return (
 		<div style={{opacity: p, translate: `0 ${(1 - p) * 80}px`, rotate: `${tilt * p}deg`, scale: String(interpolate(p, [0, 1], [0.85, 1])), background: '#fff', padding: 16, paddingBottom: caption ? 0 : 16, borderRadius: 24, boxShadow: '0 30px 70px rgba(20,40,90,0.18)'}}>
 			<div style={{width: w, height: h, overflow: 'hidden', borderRadius: 14}}>
@@ -134,36 +186,34 @@ const S3: React.FC = () => (
 	</Drift>
 );
 
-/* 4 — 1993: open-text internet */
-const TERM = ['> connect mail.server', 'USER alex', 'PASS qwerty123', '> GET /bank/login', 'card=4276 1234 5678', '> MSG "встречаемся в 8"'];
+/* 4 — 1993: open-text internet (live photo, tracked monitor) */
+const TERM = ['USER alex', 'PASS qwerty123', 'card=4276 1234 5678', 'MSG "встречаемся в 8"'];
 const S4: React.FC = () => {
 	const f = useCurrentFrame();
 	const eye = prog(f, at(3, 19.0), 16);
 	return (
-		<Drift dur={DUR[3] + TR} amount={0.03}>
+		<Drift dur={DUR[3] + TR}>
 			<AppleBg glow="255,59,48" />
-			<Page gap={30}>
-				<Year from={2026} to={1993} a={at(3, 12.6)} b={at(3, 13.8)} />
-				<Lines at={at(3, 14.1)} size={62} weight={700} lines={['Интернет — пара миллионов', 'компьютеров']} color={SUB} stagger={at(3, 15.6) - at(3, 14.1)} />
-				<Rise at={at(3, 16.2)} dist={50}>
-					<div style={{position: 'relative', width: W, background: '#0c0f14', borderRadius: 28, padding: '34px 38px', boxSizing: 'border-box', boxShadow: '0 30px 70px rgba(0,0,0,0.3)'}}>
-						<div style={{display: 'flex', gap: 10, marginBottom: 20}}>
-							{['#ff5f57', '#febc2e', '#28c840'].map((c) => (
-								<div key={c} style={{width: 18, height: 18, borderRadius: 9, background: c}} />
-							))}
-						</div>
+			<Page gap={28}>
+				<Tracked src="history/pc90.jpg" iw={827} ih={539} w={W} h={600} at={at(3, 12.6)} from={[430, 270, 1]} to={[270, 220, 1.45]} dur={fr(7.5)} targets={[{x: 180, y: 112, w: 150, h: 170, label: 'открытый текст', at: at(3, 17.3), color: RED}]}>
+					<div style={{position: 'absolute', left: 34, bottom: 20, fontFamily: IT, fontSize: 170, fontWeight: 700, color: '#fff', letterSpacing: -8, lineHeight: 1, textShadow: '0 6px 30px rgba(0,0,0,0.45)'}}>
+						<Roll from={2026} to={1993} a={at(3, 12.6)} b={at(3, 13.8)} />
+					</div>
+				</Tracked>
+				<Rise at={at(3, 16.2)} dist={40}>
+					<div style={{position: 'relative', width: W, background: '#0c0f14', borderRadius: 28, padding: '28px 36px', boxSizing: 'border-box'}}>
 						{TERM.map((l, i) => {
 							const t = at(3, 16.4) + i * 7;
 							const n = Math.round(interpolate(f, [t, t + 10], [0, l.length], clamp));
-							const hl = i === 2 || i === 4;
+							const hl = i < 3 && f > at(3, 17.9);
 							return (
-								<div key={i} style={{fontFamily: MONO, fontSize: 38, lineHeight: 1.5, color: hl && f > at(3, 17.9) ? '#ff6b6b' : '#39d98a', background: hl && f > at(3, 17.9) ? 'rgba(255,59,48,0.15)' : 'transparent', borderRadius: 6, whiteSpace: 'pre'}}>
+								<div key={i} style={{fontFamily: MONO, fontSize: 40, lineHeight: 1.5, color: hl ? '#ff6b6b' : '#39d98a', background: hl ? 'rgba(255,59,48,0.15)' : 'transparent', borderRadius: 6, whiteSpace: 'pre'}}>
 									{l.slice(0, n)}
 									{n > 0 && n < l.length ? '▌' : ''}
 								</div>
 							);
 						})}
-						<div style={{position: 'absolute', right: -20, top: -30, width: 130, height: 130, borderRadius: 65, background: RED, padding: 30, boxSizing: 'border-box', opacity: eye, scale: String(interpolate(eye, [0, 0.6, 1], [0.3, 1.15, 1])), boxShadow: '0 16px 40px rgba(255,59,48,0.4)'}}>
+						<div style={{position: 'absolute', right: -16, top: -30, width: 120, height: 120, borderRadius: 60, background: RED, padding: 28, boxSizing: 'border-box', opacity: eye, scale: String(interpolate(eye, [0, 0.6, 1], [0.5, 1.08, 1])), boxShadow: '0 16px 40px rgba(255,59,48,0.4)'}}>
 							<svg viewBox="0 0 24 24" width="100%" fill="none" stroke="#fff" strokeWidth={2}>
 								<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
 								<circle cx="12" cy="12" r="3" />
@@ -171,16 +221,18 @@ const S4: React.FC = () => {
 						</div>
 					</div>
 				</Rise>
-				<div style={{display: 'flex', gap: 18, fontFamily: IT, fontSize: 58, fontWeight: 700}}>
+				<div style={{textAlign: 'center', fontFamily: IT, fontSize: 60, fontWeight: 700, lineHeight: 1.15}}>
 					<Pop at={at(3, 17.35)} style={{color: INK}}>
-						открытым текстом.
+						Всё — открытым текстом.
+					</Pop>
+					<br />
+					<Pop at={at(3, 19.0)} style={{color: RED}}>
+						Любой может подсмотреть
 					</Pop>
 				</div>
-				<Pop at={at(3, 19.0)} style={{fontFamily: IT, fontSize: 58, fontWeight: 700, color: RED}}>
-					Любой может подсмотреть
-				</Pop>
 			</Page>
 			<Tick at={at(3, 13.8)} />
+			<Tick at={at(3, 17.35)} />
 			<Tick at={at(3, 19.0)} />
 		</Drift>
 	);
@@ -197,20 +249,20 @@ const S5: React.FC = () => {
 		.map((c, i) => (i < e ? enc[i] : c))
 		.join('');
 	const locked = e >= plain.length;
+	const bl = prog(f, at(4, 22.3), 14);
 	return (
-		<Drift dur={DUR[4] + TR} amount={0.03}>
+		<Drift dur={DUR[4] + TR}>
 			<AppleBg />
-			<Page gap={26}>
-				<div style={{textAlign: 'center'}}>
-					<Lines at={at(4, 20.6)} size={60} weight={700} lines={['Колумбийский университет']} color={SUB} />
-					<Lines at={at(4, 22.3)} size={60} weight={700} lines={['+ Bell Labs']} color={SUB} />
-				</div>
-				<div style={{display: 'flex', gap: 30, alignItems: 'flex-start'}}>
-					<Photo src="history/p1.jpg" at={at(4, 23.7)} w={380} h={440} caption="Джон Иоаннидис" tilt={-3} pos="50% 30%" />
-					<Photo src="history/p2.jpg" at={at(4, 24.85)} w={380} h={440} caption="Мэтт Блейз" tilt={3} pos="50% 35%" />
+			<Page gap={24}>
+				<Tracked src="history/columbia.jpg" iw={827} ih={518} w={W} h={400} at={at(4, 20.5)} from={[413, 300, 1]} to={[413, 230, 1.5]} dur={fr(3)} targets={[{x: 325, y: 135, w: 175, h: 140, label: 'Колумбийский университет', at: at(4, 20.8)}]}>
+					<div style={{position: 'absolute', right: 20, bottom: 20, background: INK, color: '#fff', fontFamily: IT, fontSize: 40, fontWeight: 700, padding: '12px 26px', borderRadius: 40, opacity: bl, scale: String(interpolate(bl, [0, 1], [0.8, 1]))}}>+ Bell Labs</div>
+				</Tracked>
+				<div style={{display: 'flex', gap: 26, alignItems: 'flex-start'}}>
+					<Photo src="history/p1.jpg" at={at(4, 23.7)} w={330} h={360} caption="Джон Иоаннидис" tilt={-2} pos="50% 30%" />
+					<Photo src="history/p2.jpg" at={at(4, 24.85)} w={330} h={360} caption="Мэтт Блейз" tilt={2} pos="50% 35%" />
 				</div>
 				<div style={{display: 'flex', alignItems: 'baseline', gap: 20}}>
-					<Pop at={at(4, 26.6)} style={{fontFamily: IT, fontSize: 150, fontWeight: 700, color: ACCENT, letterSpacing: -6}}>
+					<Pop at={at(4, 26.6)} style={{fontFamily: IT, fontSize: 130, fontWeight: 700, color: ACCENT, letterSpacing: -5, lineHeight: 1}}>
 						swIPe
 					</Pop>
 					<Pop at={at(4, 27.3)} style={{fontFamily: IT, fontSize: 46, fontWeight: 600, color: SUB}}>
@@ -218,15 +270,16 @@ const S5: React.FC = () => {
 					</Pop>
 				</div>
 				<Rise at={at(4, 28.1)} dist={30}>
-					<div style={{width: W, boxSizing: 'border-box', background: locked ? ACCENT : '#0c0f14', borderRadius: 24, padding: '26px 34px', display: 'flex', alignItems: 'center', gap: 24}}>
-						<svg viewBox="0 0 24 24" width={56} fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round">
+					<div style={{width: W, boxSizing: 'border-box', background: locked ? ACCENT : '#0c0f14', borderRadius: 24, padding: '24px 34px', display: 'flex', alignItems: 'center', gap: 24}}>
+						<svg viewBox="0 0 24 24" width={52} fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round">
 							<rect x="5" y="10.5" width="14" height="10" rx="2.5" />
 							<path d={locked ? 'M8 10.5V7.5a4 4 0 0 1 8 0v3' : 'M8 10.5V7.5a4 4 0 0 1 7.5-2'} />
 						</svg>
-						<span style={{fontFamily: MONO, fontSize: 50, color: locked ? '#fff' : '#39d98a', whiteSpace: 'pre'}}>{shown}</span>
+						<span style={{fontFamily: MONO, fontSize: 48, color: locked ? '#fff' : '#39d98a', whiteSpace: 'pre'}}>{shown}</span>
 					</div>
 				</Rise>
 			</Page>
+			<Tick at={at(4, 20.8)} />
 			<Tick at={at(4, 23.7)} />
 			<Tick at={at(4, 24.85)} />
 			<Tick at={at(4, 26.6)} vol={0.22} />
@@ -236,53 +289,65 @@ const S5: React.FC = () => {
 };
 
 /* 6 — 1996, Microsoft, Gurdeep Singh Pall, PPTP, «отец VPN» */
-const S6: React.FC = () => (
-	<Drift dur={DUR[5] + TR} amount={0.03}>
-		<AppleBg />
-		<Page gap={30}>
-			<div style={{display: 'flex', alignItems: 'baseline', gap: 24}}>
-				<Year from={1993} to={1996} a={at(5, 30.7)} b={at(5, 31.5)} size={170} />
-				<Pop at={at(5, 31.85)} style={{fontFamily: IT, fontSize: 52, fontWeight: 700, color: SUB}}>
-					Microsoft
-				</Pop>
-			</div>
-			<Photo src="history/p3.jpg" at={at(5, 32.2)} w={W - 32} h={560} caption={<>Гурдип Сингх Палл <span style={{color: GRAY, fontWeight: 500}}>и команда</span></>} />
-			<div style={{display: 'flex', alignItems: 'center', gap: 26}}>
-				<Pop at={at(5, 34.85)} style={{fontFamily: IT, fontSize: 170, fontWeight: 700, color: ACCENT, letterSpacing: -7, lineHeight: 1}}>
-					PPTP
-				</Pop>
-				<div style={{fontFamily: IT, fontSize: 48, fontWeight: 700, color: INK, lineHeight: 1.1}}>
-					<Pop at={at(5, 36.4)}>VPN →</Pop>
-					<br />
-					<Pop at={at(5, 37.7)} style={{color: ACCENT}}>
-						для всех
-					</Pop>
+const S6: React.FC = () => {
+	const f = useCurrentFrame();
+	const swap = prog(f, at(5, 32.2), 16);
+	return (
+		<Drift dur={DUR[5] + TR}>
+			<AppleBg />
+			<Page gap={30}>
+				<div style={{position: 'relative', width: W, height: 600}}>
+					<div style={{position: 'absolute', inset: 0, opacity: 1 - swap}}>
+						<Tracked src="history/ms90.jpg" iw={827} ih={515} w={W} h={600} at={at(5, 30.6)} from={[420, 260, 1]} to={[640, 190, 1.35]} dur={fr(1.8)} targets={[{x: 528, y: 118, w: 118, h: 118, label: 'Microsoft', at: at(5, 31.8)}]}>
+							<div style={{position: 'absolute', left: 30, bottom: 16, fontFamily: IT, fontSize: 160, fontWeight: 700, color: '#fff', letterSpacing: -7, lineHeight: 1, textShadow: '0 6px 30px rgba(0,0,0,0.45)'}}>
+								<Roll from={1993} to={1996} a={at(5, 30.7)} b={at(5, 31.5)} />
+							</div>
+						</Tracked>
+					</div>
+					<div style={{position: 'absolute', inset: 0, opacity: swap}}>
+						<Tracked src="history/p3.jpg" iw={350} ih={229} w={W} h={600} at={at(5, 32.2)} from={[175, 115, 1]} to={[250, 150, 1.25]} dur={fr(6)} targets={[]}>
+							<div style={{position: 'absolute', left: 0, right: 0, bottom: 0, padding: '60px 30px 22px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontFamily: IT, fontSize: 44, fontWeight: 700, color: '#fff'}}>
+								Гурдип Сингх Палл <span style={{fontWeight: 500, opacity: 0.8}}>и команда</span>
+							</div>
+						</Tracked>
+					</div>
 				</div>
-			</div>
-			<Rise at={at(5, 39.9)} dist={30}>
-				<Card style={{width: W, padding: '26px 40px', boxSizing: 'border-box', background: INK, textAlign: 'center'}}>
-					<span style={{fontFamily: IT, fontSize: 60, fontWeight: 700, color: '#fff', letterSpacing: -1}}>
-						«Отец VPN»
-					</span>
-				</Card>
-			</Rise>
-		</Page>
-		<Tick at={at(5, 31.5)} />
-		<Tick at={at(5, 34.85)} vol={0.22} />
-		<Tick at={at(5, 40.8)} />
-	</Drift>
-);
+				<div style={{display: 'flex', alignItems: 'center', gap: 26}}>
+					<Pop at={at(5, 34.85)} style={{fontFamily: IT, fontSize: 170, fontWeight: 700, color: ACCENT, letterSpacing: -7, lineHeight: 1}}>
+						PPTP
+					</Pop>
+					<div style={{fontFamily: IT, fontSize: 48, fontWeight: 700, color: INK, lineHeight: 1.1}}>
+						<Pop at={at(5, 36.4)}>VPN →</Pop>
+						<br />
+						<Pop at={at(5, 37.7)} style={{color: ACCENT}}>
+							для всех
+						</Pop>
+					</div>
+				</div>
+				<Rise at={at(5, 39.9)} dist={30}>
+					<Card style={{width: W, padding: '26px 40px', boxSizing: 'border-box', background: INK, textAlign: 'center'}}>
+						<span style={{fontFamily: IT, fontSize: 60, fontWeight: 700, color: '#fff', letterSpacing: -1}}>«Отец VPN»</span>
+					</Card>
+				</Rise>
+			</Page>
+			<Tick at={at(5, 31.5)} />
+			<Tick at={at(5, 31.8)} vol={0.1} />
+			<Tick at={at(5, 34.85)} vol={0.22} />
+			<Tick at={at(5, 40.8)} />
+		</Drift>
+	);
+};
 
 /* 7 — only for companies: home → office */
 const Building: React.FC<{kind: 'home' | 'office'; label: string; at: number}> = ({kind, label, at: a}) => (
 	<Rise at={a} dist={40}>
-		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16}}>
-			<div style={{width: 230, height: 230, borderRadius: 60, background: '#fff', boxShadow: '0 24px 50px rgba(20,40,90,0.12)', padding: 50, boxSizing: 'border-box'}}>
+		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12}}>
+			<div style={{width: 190, height: 190, borderRadius: 52, background: '#fff', boxShadow: '0 24px 50px rgba(20,40,90,0.12)', padding: 42, boxSizing: 'border-box'}}>
 				<svg viewBox="0 0 24 24" width="100%" fill="none" stroke={INK} strokeWidth={1.7} strokeLinejoin="round">
 					{kind === 'home' ? <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /> : <path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3" />}
 				</svg>
 			</div>
-			<div style={{fontFamily: IT, fontSize: 44, fontWeight: 700, color: INK}}>{label}</div>
+			<div style={{fontFamily: IT, fontSize: 40, fontWeight: 700, color: INK}}>{label}</div>
 		</div>
 	</Rise>
 );
@@ -292,24 +357,23 @@ const S7: React.FC = () => {
 	return (
 		<Drift dur={DUR[6] + TR}>
 			<AppleBg />
-			<Page gap={70}>
+			<Page gap={40}>
 				<div style={{textAlign: 'center'}}>
-					<Lines at={at(6, 41.9)} size={80} weight={700} lines={['Сначала VPN был']} color={GRAY} />
-					<Lines at={at(6, 43.5)} size={110} weight={700} lines={['только для', 'компаний']} stagger={at(6, 43.85) - at(6, 43.5)} />
+					<Lines at={at(6, 41.9)} size={76} weight={700} lines={['Сначала VPN был']} color={GRAY} />
+					<Lines at={at(6, 43.5)} size={88} weight={700} lines={['только для компаний']} />
 				</div>
+				<Tracked src="history/office90.jpg" iw={827} ih={591} w={W} h={520} at={at(6, 41.9)} from={[413, 300, 1]} to={[430, 330, 1.3]} dur={fr(5.5)} targets={[{x: 420, y: 300, w: 140, h: 125, label: 'рабочая сеть', at: at(6, 43.85)}]} />
 				<div style={{position: 'relative', width: W, display: 'flex', justifyContent: 'space-between'}}>
 					<Building kind="home" label="Дом" at={at(6, 44.5)} />
-					<div style={{position: 'absolute', left: 230, right: 230, top: 95, height: 40, borderRadius: 20, background: 'rgba(0,113,227,0.1)', overflow: 'hidden', clipPath: `inset(0 ${(1 - t) * 100}% 0 0 round 20px)`, boxShadow: 'inset 0 0 0 3px rgba(0,113,227,0.4)'}}>
+					<div style={{position: 'absolute', left: 200, right: 200, top: 75, height: 40, borderRadius: 20, background: 'rgba(0,113,227,0.1)', overflow: 'hidden', clipPath: `inset(0 ${(1 - t) * 100}% 0 0 round 20px)`, boxShadow: 'inset 0 0 0 3px rgba(0,113,227,0.4)'}}>
 						{Array.from({length: 5}).map((_, i) => (
-							<div key={i} style={{position: 'absolute', top: 10, left: ((f * 6 + i * 90) % 480) - 40, width: 34, height: 20, borderRadius: 6, background: ACCENT}} />
+							<div key={i} style={{position: 'absolute', top: 10, left: ((f * 6 + i * 100) % 520) - 40, width: 34, height: 20, borderRadius: 6, background: ACCENT}} />
 						))}
 					</div>
 					<Building kind="office" label="Офис" at={at(6, 44.9)} />
 				</div>
-				<Rise at={at(6, 45.9)} dist={24}>
-					<div style={{fontFamily: IT, fontSize: 50, fontWeight: 600, color: SUB, textAlign: 'center'}}>безопасно подключаться из дома</div>
-				</Rise>
 			</Page>
+			<Tick at={at(6, 43.85)} />
 			<Tick at={at(6, 45.4)} />
 		</Drift>
 	);
@@ -397,6 +461,7 @@ export const History: React.FC = () => (
 				</React.Fragment>
 			))}
 		</TransitionSeries>
+		<Watermark />
 		<Audio src={staticFile('history/voice.mp3')} />
 	</AbsoluteFill>
 );
