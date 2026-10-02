@@ -208,7 +208,7 @@ const S1: React.FC = () => {
 			<AppleBg />
 			<Page gap={36}>
 				<Rise at={0} dist={40}>
-					<Silhouette size={260} />
+					<div style={{width: 300, height: 300, borderRadius: 150, overflow: 'hidden', boxShadow: '0 24px 60px rgba(20,40,90,0.25)', border: '6px solid #fff'}}><Img src={staticFile('tbl/portrait.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 30%'}} /></div>
 				</Rise>
 				<Lines at={at(0, 0.2)} size={84} weight={700} lines={['Этот человек изменил', 'жизнь']} stagger={at(0, 1.2) - at(0, 0.2)} />
 				<div style={{fontFamily: IT, fontSize: 190, fontWeight: 700, color: ACCENT, letterSpacing: -8, lineHeight: 1}}>{n} млрд</div>
@@ -328,7 +328,7 @@ const S5: React.FC = () => {
 			<Page gap={30}>
 				<div style={{display: 'flex', alignItems: 'center', gap: 30}}>
 					<Rise at={at(4, 24.4)} dist={30}>
-						<Silhouette size={170} />
+						<div style={{width: 230, height: 230, borderRadius: 40, overflow: 'hidden', boxShadow: '0 20px 50px rgba(20,40,90,0.22)'}}><Img src={staticFile('tbl/young.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: '28% 30%'}} /></div>
 					</Rise>
 					<div>
 						<Lines at={at(4, 24.5)} size={44} weight={600} lines={['британский инженер']} align="left" color={GRAY} />
@@ -411,17 +411,8 @@ const S7: React.FC = () => {
 			<AppleBg />
 			<Page gap={50}>
 				<Lines at={at(6, 45.85)} size={76} weight={700} lines={['На компьютере —', 'наклейка']} stagger={at(6, 47.0) - at(6, 45.85)} />
-				<Rise at={at(6, 45.9)} dist={50}>
-					<div style={{position: 'relative', width: 560, height: 560, borderRadius: 24, background: 'linear-gradient(145deg,#2c2c2e,#0b0b0c)', boxShadow: '0 40px 90px rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.08)'}}>
-						<div style={{position: 'absolute', left: 40, bottom: 40, width: 18, height: 18, borderRadius: 9, background: '#34c759', boxShadow: `0 0 ${10 + Math.sin(f / 6) * 6}px #34c759`}} />
-						<div style={{position: 'absolute', left: 70, top: 150, width: 420, padding: '26px 30px', background: '#fffbe6', borderRadius: 6, rotate: '-4deg', boxShadow: '0 10px 24px rgba(0,0,0,0.4)', opacity: st, scale: String(interpolate(st, [0, 1], [1.3, 1])), fontFamily: '"Comic Sans MS", "Segoe Print", cursive', color: '#c0392b', fontSize: 38, lineHeight: 1.25, textAlign: 'center'}}>
-							This machine is a server.
-							<br />
-							<b>DO NOT POWER IT DOWN!!</b>
-						</div>
-					</div>
-				</Rise>
-				<Pop at={at(6, 47.6)} style={{fontFamily: IT, fontSize: 64, fontWeight: 700, color: INK}}>
+				<Tracked src="tbl/next.jpg" iw={827} ih={525} w={W} h={640} at={at(6, 45.85)} from={[420, 270, 1]} to={[330, 330, 1.7]} dur={fr(3.5)} targets={[{x: 292, y: 292, w: 92, h: 76, label: 'DO NOT POWER IT DOWN!!', at: at(6, 47.0), color: RED}]} />
+				<Pop at={at(6, 47.6)} style={{fontFamily: IT, fontSize: 56, fontWeight: 700, color: INK, whiteSpace: 'nowrap'}}>
 					«Это сервер. <span style={{color: RED}}>Не выключать!</span>»
 				</Pop>
 			</Page>
@@ -450,7 +441,8 @@ const S8: React.FC = () => {
 							))}
 							<div style={{flex: 1, background: '#fff', borderRadius: 12, padding: '8px 18px', fontFamily: MONO, fontSize: 30, color: INK}}>info.cern.ch</div>
 						</div>
-						<div style={{padding: '34px 40px', fontFamily: '"Times New Roman", serif', minHeight: 420}}>
+						<div style={{position: 'relative', overflow: 'hidden', padding: '34px 40px', fontFamily: '"Times New Roman", serif', minHeight: 420}}>
+							<Img src={staticFile('tbl/site.jpg')} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: '0% 38%', transformOrigin: '0% 35%', scale: '1.3', opacity: prog(f, at(7, 54.0) - 30, 14)}} />
 							<div style={{fontSize: 56, fontWeight: 700, color: INK, marginBottom: 20}}>World Wide Web</div>
 							<div style={{fontSize: 36, color: INK, lineHeight: 1.4}}>
 								{PAGE_TEXT.slice(0, n).split(/(hypermedia|documents)/).map((s, i) => (s === 'hypermedia' || s === 'documents' ? <u key={i} style={{color: '#0000ee'}}>{s}</u> : <span key={i}>{s}</span>))}
@@ -516,16 +508,8 @@ const S10: React.FC = () => {
 			<AppleBg />
 			<Page gap={30}>
 				<Lines at={at(9, 63.2)} size={90} weight={700} lines={['Сегодня']} color={GRAY} />
-				<div style={{position: 'relative', width: 620, height: 620}}>
-					<div style={{position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #4aa3ff, #0b3d91 70%)', boxShadow: '0 40px 90px rgba(0,80,200,0.35)'}} />
-					{dots.map((_, i) => {
-						const a = (i * 137.5 * Math.PI) / 180;
-						const r = 290 * Math.sqrt((i + 0.5) / dots.length);
-						const x = 310 + Math.cos(a + f / 120) * r;
-						const y = 310 + Math.sin(a + f / 120) * r * 0.95;
-						const q = prog(f, at(9, 64.0) + i * 0.4, 8);
-						return <div key={i} style={{position: 'absolute', left: x - 6, top: y - 6, width: 12, height: 12, borderRadius: 6, background: '#fff', opacity: q * (0.6 + 0.4 * Math.sin(f / 7 + i)), boxShadow: '0 0 12px #fff'}} />;
-					})}
+				<div style={{position: 'relative', width: 680, height: 600, borderRadius: 40, overflow: 'hidden', boxShadow: '0 40px 90px rgba(0,30,90,0.35)', background: '#000'}}>
+					<Img src={staticFile('tbl/earth.jpg')} style={{width: '100%', height: '100%', objectFit: 'cover', scale: String(interpolate(f, [0, DUR[9]], [1.05, 1.2], clamp)), rotate: `${f * 0.03}deg`}} />
 				</div>
 				<div style={{fontFamily: IT, fontSize: 160, fontWeight: 700, color: INK, letterSpacing: -7, lineHeight: 1, whiteSpace: 'nowrap'}}>{n.toFixed(0)} млрд+</div>
 				<Lines at={at(9, 67.0)} size={56} weight={700} lines={['каждый сайт работает', 'на его идее']} colors={[SUB, ACCENT]} stagger={at(9, 68.9) - at(9, 67.0)} />
