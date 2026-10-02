@@ -22,6 +22,7 @@ import {HI_FPS, HIST_FRAMES, History} from './apple/History';
 import {IN_FPS, INSIDE_FRAMES, Inside} from './apple/Inside';
 import {FR_FPS, FREE_FRAMES, Free} from './apple/Free';
 import {TB_FPS, TBL_FRAMES, Tbl} from './apple/Tbl';
+import {D6_FPS, DAY6_FRAMES, Day6} from './apple/Day6';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -44,6 +45,7 @@ export const Root: React.FC = () => (
 		<Composition id="Inside" component={Inside} durationInFrames={INSIDE_FRAMES} fps={IN_FPS} width={1080} height={1920} />
 		<Composition id="Free" component={Free} durationInFrames={FREE_FRAMES} fps={FR_FPS} width={1080} height={1920} />
 		<Composition id="Tbl" component={Tbl} durationInFrames={TBL_FRAMES} fps={TB_FPS} width={1080} height={1920} />
+		<Composition id="Day6" component={Day6} durationInFrames={DAY6_FRAMES} fps={D6_FPS} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />

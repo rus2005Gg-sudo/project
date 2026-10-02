@@ -8,7 +8,7 @@ const RED = '#ff3b30';
 const GREEN = '#34c759';
 
 /* simplified social-app glyphs (generic shapes, not official logos) */
-const ICONS: {bg: string; glyph: React.ReactNode}[] = [
+export const ICONS: {bg: string; glyph: React.ReactNode}[] = [
 	{bg: 'linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)', glyph: <svg viewBox="0 0 24 24" width="60%" fill="none" stroke="#fff" strokeWidth={2}><rect x="4" y="4" width="16" height="16" rx="5" /><circle cx="12" cy="12" r="3.8" /><circle cx="17" cy="7" r="0.8" fill="#fff" /></svg>},
 	{bg: '#ff0033', glyph: <svg viewBox="0 0 24 24" width="55%"><path d="M9 7.5v9l7.5-4.5z" fill="#fff" /></svg>},
 	{bg: '#111', glyph: <svg viewBox="0 0 24 24" width="55%" fill="none" stroke="#fff" strokeWidth={2.4} strokeLinecap="round"><path d="M13 4v10.5a3.5 3.5 0 1 1-3.5-3.5M13 4c.5 2.5 2.5 4 5 4" /></svg>},

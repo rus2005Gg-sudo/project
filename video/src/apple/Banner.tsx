@@ -1,93 +1,122 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
-import {ACCENT, AppIcon, AppleBg, BlackPill, Count, Drift, Eyebrow, GRAY, INK, INOUT, IT, Lines, Lockup, Rise, blurZoom, clamp, prog} from './kit';
+import {ACCENT, AppIcon, AppleBg, BlackPill, Drift, INK, INOUT, IT, Lines, Rise, blurZoom, clamp, prog} from './kit';
+import {ICONS} from './BotWelcome';
 
-const TR = 16;
-const D = [66, 84, 120];
+const TR = 14;
+const D = [84, 72, 96, 96];
 export const BANNER_FRAMES = D.reduce((a, b) => a + b, 0);
+const RED = '#ff3b30';
+const GREEN = '#34c759';
 
-const Center: React.FC<{children: React.ReactNode}> = ({children}) => (
-	<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 70}}>{children}</AbsoluteFill>
+const Center: React.FC<{children: React.ReactNode; gap?: number}> = ({children, gap = 70}) => (
+	<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap}}>{children}</AbsoluteFill>
 );
 
-// 1 — icon + "раздаёт подписки"
-const S1: React.FC = () => (
-	<Drift dur={D[0] + TR}>
+// 1 — «Не работают соцсети?» + blocked app icons
+const S1: React.FC = () => {
+	const f = useCurrentFrame();
+	return (
+		<Drift dur={D[0] + TR}>
+			<AppleBg glow="255,59,48" />
+			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 46}}>
+				<Lines at={2} size={112} lines={['Не работают соцсети?']} colors={[INK]} />
+				<div style={{display: 'flex', gap: 30}}>
+					{ICONS.map((ic, i) => {
+						const p = prog(f, 10 + i * 4, 14);
+						const x = prog(f, 26 + i * 4, 10);
+						return (
+							<div key={i} style={{position: 'relative', width: 130, height: 130, opacity: p, translate: `0 ${(1 - p) * 30 + Math.sin(f / 4 + i) * (x > 0.5 ? 2 : 0)}px`}}>
+								<div style={{width: '100%', height: '100%', borderRadius: 34, background: ic.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: `grayscale(${x})`, opacity: 1 - x * 0.4, boxShadow: '0 14px 30px rgba(20,40,90,0.12)'}}>{ic.glyph}</div>
+								<div style={{position: 'absolute', right: -10, top: -10, width: 48, height: 48, borderRadius: 24, border: '4px solid #fff', background: RED, color: '#fff', fontFamily: IT, fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: x, scale: String(interpolate(x, [0, 0.6, 1], [0.3, 1.15, 1]))}}>✕</div>
+							</div>
+						);
+					})}
+				</div>
+			</AbsoluteFill>
+		</Drift>
+	);
+};
+
+// 2 — «Глушат интернет?» signal bars collapsing
+const S2: React.FC = () => {
+	const f = useCurrentFrame();
+	const drop = prog(f, 18, 30, INOUT);
+	return (
+		<Drift dur={D[1] + TR}>
+			<AppleBg glow="255,59,48" />
+			<Center>
+				<div style={{display: 'flex', alignItems: 'flex-end', gap: 22, height: 300}}>
+					{[0.3, 0.5, 0.75, 1].map((h, i) => {
+						const alive = drop < (4 - i) / 4 - 0.05 || i === 0;
+						return <div key={i} style={{width: 64, height: 300 * h, borderRadius: 16, background: alive ? (drop > 0.5 ? RED : INK) : '#d1d1d6', opacity: alive ? 1 : 0.6}} />;
+					})}
+				</div>
+				<div>
+					<Lines at={4} size={130} align="left" lines={['Глушат', 'интернет?']} colors={[INK, RED]} />
+				</div>
+			</Center>
+		</Drift>
+	);
+};
+
+// 3 — Horz VPN: 3 days free (+ whitelists)
+const S3: React.FC = () => (
+	<Drift dur={D[2] + TR}>
 		<AppleBg />
-		<Center>
+		<Center gap={60}>
 			<AppIcon size={300} at={0} />
 			<div>
-				<Rise at={10} dist={16}><div style={{fontFamily: IT, fontSize: 38, fontWeight: 500, color: ACCENT}}>Horz VPN раздаёт</div></Rise>
-				<div style={{height: 16}} />
-				<Lines at={16} size={110} align="left" lines={['подписки', 'бесплатно']} colors={[INK, ACCENT]} />
+				<Lines at={6} size={70} align="left" lines={['Horz VPN']} colors={[ACCENT]} />
+				<div style={{display: 'flex', alignItems: 'baseline', gap: 24}}>
+					<Rise at={10} dist={40}>
+						<div style={{fontFamily: IT, fontSize: 240, fontWeight: 700, color: INK, letterSpacing: -12, lineHeight: 1}}>3</div>
+					</Rise>
+					<Lines at={14} size={100} align="left" lines={['дня', 'бесплатно']} colors={[INK, ACCENT]} />
+				</div>
+				<Rise at={34} dist={20}>
+					<div style={{display: 'inline-flex', alignItems: 'center', gap: 14, marginTop: 16, background: GREEN, color: '#fff', fontFamily: IT, fontSize: 40, fontWeight: 700, padding: '12px 28px', borderRadius: 30}}>✓ Белые списки — есть</div>
+				</Rise>
 			</div>
 		</Center>
 	</Drift>
 );
 
-// 2 — big 30
-const S2: React.FC = () => {
+// 4 — CTA «Переходи и забирай»
+const S4: React.FC = () => {
 	const f = useCurrentFrame();
-	const bar = prog(f, 8, 44, INOUT);
+	const tap = (at: number) => interpolate(f - at, [0, 5, 14], [1, 0.93, 1], clamp);
+	const ring = (at: number) => {
+		const p = prog(f, at, 26);
+		return p > 0 && p < 1 ? <div style={{position: 'absolute', inset: -12, borderRadius: 100, border: `4px solid ${ACCENT}`, opacity: 1 - p, scale: String(1 + p * 0.25)}} /> : null;
+	};
 	return (
-		<Drift dur={D[1] + TR}>
+		<Drift dur={D[3]}>
 			<AppleBg />
-			<Center>
-				<Rise at={0} dist={60}>
-					<div style={{fontFamily: IT, fontSize: 360, fontWeight: 700, color: INK, letterSpacing: -18, lineHeight: 1}}>
-						<Count to={30} at={4} dur={40} />
+			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 50}}>
+				<Lines at={2} size={130} lines={['Переходи и забирай']} colors={[INK]} />
+				<Rise at={16} dist={40}>
+					<div style={{position: 'relative', scale: String(tap(40) * tap(70))}}>
+						{ring(42)}
+						{ring(72)}
+						<BlackPill style={{fontSize: 64, fontWeight: 700, padding: '36px 90px', borderRadius: 100}}>3 дня бесплатно →</BlackPill>
 					</div>
 				</Rise>
-				<div>
-					<Lines at={14} size={110} align="left" lines={['дней', 'бесплатно']} colors={[INK, ACCENT]} />
-					<div style={{width: 460, height: 10, borderRadius: 10, background: '#e5e5ea', marginTop: 40, overflow: 'hidden'}}>
-						<div style={{width: `${bar * 100}%`, height: '100%', borderRadius: 10, background: `linear-gradient(90deg,${ACCENT},#5ac8fa)`}} />
-					</div>
-				</div>
-			</Center>
+			</AbsoluteFill>
 		</Drift>
 	);
 };
 
-// 3 — CTA: ищи в Telegram
-const S3: React.FC = () => {
-	const f = useCurrentFrame();
-	const tap = (at: number) => interpolate(f - at, [0, 5, 14], [1, 0.93, 1], clamp);
-	const pillScale = tap(50) * tap(86);
-	const ring = (at: number) => {
-		const p = prog(f, at, 26);
-		return p > 0 && p < 1 ? (
-			<div style={{position: 'absolute', inset: -10, borderRadius: 80, border: `3px solid ${ACCENT}`, opacity: 1 - p, scale: String(1 + p * 0.25)}} />
-		) : null;
-	};
-	return (
-		<Drift dur={D[2]}>
-			<AppleBg />
-			<Center>
-				<AppIcon size={200} at={0} />
-				<div>
-					<Lines at={10} size={96} align="left" lines={['Ищи в', 'Telegram']} colors={[INK, ACCENT]} />
-				</div>
-				<Rise at={24} dist={40}>
-					<div style={{position: 'relative', scale: String(pillScale)}}>
-						{ring(52)}
-						{ring(88)}
-						<BlackPill style={{fontSize: 54, fontWeight: 600, padding: '34px 64px', borderRadius: 80}}>@horzvpnbot</BlackPill>
-					</div>
-				</Rise>
-			</Center>
-		</Drift>
-	);
-};
+const SCENES = [S1, S2, S3, S4];
 
 export const Banner: React.FC = () => (
 	<AbsoluteFill style={{background: '#fbfbfd'}}>
 		<TransitionSeries>
-			{[S1, S2, S3].map((S, i) => (
+			{SCENES.map((S, i) => (
 				<React.Fragment key={i}>
 					{i > 0 ? <TransitionSeries.Transition presentation={blurZoom() as never} timing={linearTiming({durationInFrames: TR, easing: INOUT})} /> : null}
-					<TransitionSeries.Sequence durationInFrames={D[i] + (i < 2 ? TR : 0)}>
+					<TransitionSeries.Sequence durationInFrames={D[i] + (i < SCENES.length - 1 ? TR : 0)}>
 						<S />
 					</TransitionSeries.Sequence>
 				</React.Fragment>
