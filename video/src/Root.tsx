@@ -25,6 +25,7 @@ import {TB_FPS, TBL_FRAMES, Tbl} from './apple/Tbl';
 import {D6_FPS, DAY6_FRAMES, Day6} from './apple/Day6';
 import {C7_FPS, CH7_FRAMES, Ch7} from './apple/Ch7';
 import {LO_FPS, LO_FRAMES, Lo} from './apple/Lo';
+import {BS_FPS, BSOD_FRAMES, Bsod} from './apple/Bsod';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -50,6 +51,7 @@ export const Root: React.FC = () => (
 		<Composition id="Day6" component={Day6} durationInFrames={DAY6_FRAMES} fps={D6_FPS} width={1080} height={1920} />
 		<Composition id="Ch7" component={Ch7} durationInFrames={CH7_FRAMES} fps={C7_FPS} width={1080} height={1920} />
 		<Composition id="Lo" component={Lo} durationInFrames={LO_FRAMES} fps={LO_FPS} width={1080} height={1920} />
+		<Composition id="Bsod" component={Bsod} durationInFrames={BSOD_FRAMES} fps={BS_FPS} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
