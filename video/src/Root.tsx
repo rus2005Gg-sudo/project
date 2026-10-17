@@ -27,6 +27,7 @@ import {C7_FPS, CH7_FRAMES, Ch7} from './apple/Ch7';
 import {LO_FPS, LO_FRAMES, Lo} from './apple/Lo';
 import {BS_FPS, BSOD_FRAMES, Bsod} from './apple/Bsod';
 import {FB_FPS, FB_FRAMES, Fb} from './apple/Fb';
+import {StyleTest} from './apple/StyleTest';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -54,6 +55,7 @@ export const Root: React.FC = () => (
 		<Composition id="Lo" component={Lo} durationInFrames={LO_FRAMES} fps={LO_FPS} width={1080} height={1920} />
 		<Composition id="Bsod" component={Bsod} durationInFrames={BSOD_FRAMES} fps={BS_FPS} width={1080} height={1920} />
 		<Composition id="Fb" component={Fb} durationInFrames={FB_FRAMES} fps={FB_FPS} width={1080} height={1920} />
+		<Composition id="StyleTest" component={StyleTest} durationInFrames={60} fps={30} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
