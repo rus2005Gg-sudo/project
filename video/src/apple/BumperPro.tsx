@@ -6,7 +6,6 @@ import {ThreeCanvas} from '@remotion/three';
 import {Environment, Lightformer, RoundedBox} from '@react-three/drei';
 import {Bloom, ChromaticAberration, EffectComposer, Noise, ToneMapping, Vignette} from '@react-three/postprocessing';
 import {ToneMappingMode} from 'postprocessing';
-import {CameraMotionBlur} from '@remotion/motion-blur';
 import {noise2D} from '@remotion/noise';
 import * as THREE from 'three';
 import {AbsoluteFill, Img, continueRender, delayRender, interpolate, spring, useCurrentFrame} from 'remotion';
@@ -294,6 +293,10 @@ const Inner: React.FC = () => {
 	const shine = interpolate(f, [104, 122], [-0.3, 1.3], clamp);
 	const tg = interpolate(f, [WHIP + 24, WHIP + 34], [0, 1], clamp);
 	const whipCA = interpolate(f, [WHIP - 1, WHIP + 4, WHIP + 12], [0, 1, 0], clamp);
+	// directional (vertical) motion blur for the whip
+	const blurA = interpolate(f, [WHIP, WHIP + 8], [0, 26], clamp);
+	const blurB = interpolate(f, [WHIP + 3, WHIP + 11], [26, 0], clamp);
+	const canvasBlur = f >= WHIP && f < WHIP + 12 ? Math.max(f < WHIP + 9 ? blurA : 0, showB ? blurB : 0) : 0;
 
 	const icons: {k: IconKey; body: string; pos: [number, number, number]; rot: [number, number, number]; at: number}[] = [
 		{k: 'ig', body: '#c13584', pos: [-5.6, 1.85, -0.6], rot: [0.25, 0.45, -0.22], at: WHIP + 10},
@@ -304,6 +307,14 @@ const Inner: React.FC = () => {
 
 	return (
 		<AbsoluteFill style={{background: KEY}}>
+			<svg width={0} height={0} style={{position: 'absolute'}}>
+				<filter id="vblurA" x="0" y="-20%" width="100%" height="140%">
+					<feGaussianBlur stdDeviation={`0 ${canvasBlur.toFixed(2)}`} />
+				</filter>
+				<filter id="vblurB" x="0" y="-50%" width="100%" height="200%">
+					<feGaussianBlur stdDeviation={`0 ${blurB.toFixed(2)}`} />
+				</filter>
+			</svg>
 			{/* background: dark card, grid, glow, particles */}
 			<Clip r={r} style={{background: '#02040b', boxShadow: f < 10 ? `0 0 36px 4px rgba(91,140,255,0.9), 0 0 0 2px ${SKY}` : '0 0 0 2px rgba(91,140,255,0.25)'}}>
 			</Clip>
@@ -311,7 +322,7 @@ const Inner: React.FC = () => {
 			{/* back WebGL layer: logo tile + sign (A), 3D icons (B) */}
 			{tex ? (
 				<Clip r={r}>
-					<div style={{position: 'absolute', inset: 0}}>
+					<div style={{position: 'absolute', inset: 0, filter: canvasBlur > 0.3 ? 'url(#vblurA)' : undefined}}>
 						<ThreeCanvas width={W} height={H} camera={{position: [0, 0, 10], fov: 30}} gl={{antialias: false, alpha: false}}>
 							<color attach="background" args={['#02040b']} />
 							<Backdrop tex={tex} />
@@ -382,7 +393,7 @@ const Inner: React.FC = () => {
 			{/* handle pill (DOM for crisp glowing text) */}
 			{showB ? (
 				<Clip r={r}>
-					<div style={{position: 'absolute', left: 0, right: 0, top: 132, display: 'flex', justifyContent: 'center', translate: `0 ${lerp(-760, 0, bIn)}px`}}>
+					<div style={{position: 'absolute', left: 0, right: 0, top: 132, display: 'flex', justifyContent: 'center', translate: `0 ${lerp(-760, 0, bIn)}px`, filter: showB && blurB > 0.3 ? 'url(#vblurB)' : undefined}}>
 						<div style={{position: 'relative', padding: '28px 116px 40px', borderRadius: 76, overflow: 'hidden', background: 'linear-gradient(180deg, rgba(24,70,210,0.55), rgba(6,22,90,0.75))', border: '6px solid #86abff', boxShadow: `0 0 ${52 + 36 * pulse}px rgba(91,140,255,0.8), inset 0 0 68px rgba(91,140,255,0.38), 0 44px 88px rgba(0,0,0,0.55)`}}>
 							<div style={{filter: `drop-shadow(0 0 ${16 + 12 * pulse}px rgba(120,165,255,0.9))`}}>
 								<div style={{fontFamily: '"Manrope", sans-serif', fontWeight: 800, fontSize: 172, letterSpacing: -4, lineHeight: 1.15, whiteSpace: 'nowrap', background: 'linear-gradient(180deg,#f2f6ff 10%,#9cbcff 90%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent'}}>@horzvpnbot</div>
@@ -408,9 +419,4 @@ const Inner: React.FC = () => {
 	);
 };
 
-/** real camera motion blur over the whole bumper */
-export const BumperPro: React.FC = () => (
-	<CameraMotionBlur shutterAngle={200} samples={5}>
-		<Inner />
-	</CameraMotionBlur>
-);
+export const BumperPro: React.FC = () => <Inner />;
