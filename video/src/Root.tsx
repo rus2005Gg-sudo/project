@@ -33,6 +33,7 @@ import {BUMPER_FRAMES, Bumper} from './apple/Bumper';
 import {BUMPER2_FRAMES, Bumper2} from './apple/Bumper2';
 import {ThreeTest} from './apple/ThreeTest';
 import {BUMPER3D_FRAMES, Bumper3D} from './apple/Bumper3D';
+import {BUMPERPRO_FRAMES, BumperPro} from './apple/BumperPro';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -66,6 +67,7 @@ export const Root: React.FC = () => (
 		<Composition id="Bumper2" component={Bumper2} durationInFrames={BUMPER2_FRAMES} fps={30} width={1696} height={672} />
 		<Composition id="ThreeTest" component={ThreeTest} durationInFrames={60} fps={30} width={1696} height={672} />
 		<Composition id="Bumper3D" component={Bumper3D} durationInFrames={BUMPER3D_FRAMES} fps={30} width={1696} height={672} />
+		<Composition id="BumperPro" component={BumperPro} durationInFrames={BUMPERPRO_FRAMES} fps={30} width={1696} height={672} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
