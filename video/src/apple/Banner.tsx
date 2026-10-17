@@ -1,13 +1,17 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {AppIcon, Drift, INOUT, OUT, blurZoom, clamp, prog} from './kit';
 import {HZ, HZ_BG, HZ_BLUE, HZ_INK} from './brand';
 import {ICONS} from './BotWelcome';
 
 const TR = 14;
-const D = [84, 72, 96, 96];
-export const BANNER_FRAMES = D.reduce((a, b) => a + b, 0);
+// voice-synced: scene boundaries follow the spoken words
+const VOICE = 9.87;
+const BS = [0, 1.42, 2.72, 6.72];
+const BANNER_END = Math.round((VOICE + 0.6) * 30);
+const D = BS.map((s, i) => (i < BS.length - 1 ? Math.round(BS[i + 1] * 30) : BANNER_END) - Math.round(s * 30));
+export const BANNER_FRAMES = BANNER_END;
 const RED = '#ff3b30';
 const GREEN = '#22b45a';
 const AppleBg: React.FC<{glow?: string}> = ({glow}) => (
@@ -55,8 +59,8 @@ const S1: React.FC = () => {
 				<Lines at={2} size={112} lines={['Не работают соцсети?']} colors={[HZ_INK]} />
 				<div style={{display: 'flex', gap: 30}}>
 					{ICONS.map((ic, i) => {
-						const p = prog(f, 10 + i * 4, 14);
-						const x = prog(f, 26 + i * 4, 10);
+						const p = prog(f, 8 + i * 2, 10);
+						const x = prog(f, 17 + i * 2, 8);
 						return (
 							<div key={i} style={{position: 'relative', width: 130, height: 130, opacity: p, translate: `0 ${(1 - p) * 30 + Math.sin(f / 4 + i) * (x > 0.5 ? 2 : 0)}px`}}>
 								<div style={{width: '100%', height: '100%', borderRadius: 34, background: ic.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: `grayscale(${x})`, opacity: 1 - x * 0.4, boxShadow: '0 14px 30px rgba(20,40,90,0.12)'}}>{ic.glyph}</div>
@@ -73,7 +77,7 @@ const S1: React.FC = () => {
 // 2 — «Глушат интернет?» signal bars collapsing
 const S2: React.FC = () => {
 	const f = useCurrentFrame();
-	const drop = prog(f, 18, 30, INOUT);
+	const drop = prog(f, 8, 24, INOUT);
 	return (
 		<Drift dur={D[1] + TR}>
 			<AppleBg glow="255,59,48" />
@@ -85,7 +89,7 @@ const S2: React.FC = () => {
 					})}
 				</div>
 				<div>
-					<Lines at={4} size={130} align="left" lines={['Глушат', 'интернет?']} colors={[HZ_INK, RED]} />
+					<Lines at={1} size={130} align="left" lines={['Глушат', 'интернет?']} colors={[HZ_INK, RED]} />
 				</div>
 			</Center>
 		</Drift>
@@ -99,14 +103,14 @@ const S3: React.FC = () => (
 		<Center gap={60}>
 			<AppIcon size={300} at={0} />
 			<div>
-				<Lines at={6} size={70} align="left" lines={['Horz VPN']} colors={[HZ_BLUE]} />
+				<Lines at={1} size={70} align="left" lines={['Horz VPN']} colors={[HZ_BLUE]} />
 				<div style={{display: 'flex', alignItems: 'baseline', gap: 24}}>
-					<Rise at={10} dist={40}>
+					<Rise at={34} dist={40}>
 						<div style={{fontFamily: HZ, fontSize: 250, fontWeight: 900, color: HZ_INK, letterSpacing: -12, lineHeight: 1}}>3</div>
 					</Rise>
-					<Lines at={14} size={100} align="left" lines={['дня', 'бесплатно']} colors={[HZ_INK, HZ_BLUE]} />
+					<Lines at={38} size={100} align="left" lines={['дня', 'бесплатно']} colors={[HZ_INK, HZ_BLUE]} />
 				</div>
-				<Rise at={34} dist={20}>
+				<Rise at={76} dist={20}>
 					<div style={{display: 'inline-flex', alignItems: 'center', gap: 14, marginTop: 16, background: GREEN, color: '#fff', fontFamily: HZ, fontSize: 38, fontWeight: 800, padding: '12px 28px', borderRadius: 30}}>✓ Белые списки — есть</div>
 				</Rise>
 			</div>
@@ -127,14 +131,14 @@ const S4: React.FC = () => {
 			<AppleBg />
 			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 30}}>
 				<Lines at={2} size={104} lines={['Переходи и забирай']} colors={[HZ_INK]} />
-				<Rise at={16} dist={40}>
-					<div style={{position: 'relative', scale: String(tap(40) * tap(70))}}>
-						{ring(42)}
-						{ring(72)}
+				<Rise at={22} dist={40}>
+					<div style={{position: 'relative', scale: String(tap(28) * tap(52))}}>
+						{ring(30)}
+						{ring(54)}
 						<BlackPill style={{fontSize: 64, fontWeight: 800, padding: '30px 80px', borderRadius: 100}}>3 дня бесплатно →</BlackPill>
 					</div>
 				</Rise>
-				<Rise at={34} dist={24}>
+				<Rise at={44} dist={24}>
 					<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 76, color: HZ_BLUE, letterSpacing: -2}}>@horzvpnbot</div>
 				</Rise>
 			</AbsoluteFill>
@@ -156,5 +160,6 @@ export const Banner: React.FC = () => (
 				</React.Fragment>
 			))}
 		</TransitionSeries>
+		<Audio src={staticFile('banner/voice.mp3')} />
 	</AbsoluteFill>
 );
