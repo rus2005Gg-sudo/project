@@ -275,7 +275,7 @@ const SB: React.FC = () => {
 	const f = useCurrentFrame();
 	const s = 1;
 	const travel = lin(f, at(s, 7.7), at(s, 13.2));
-	const y = interpolate(easeOut(travel), [0, 1], [1360, 790]);
+	const y = interpolate(easeOut(travel), [0, 1], [1360, 930]);
 	const flip = lin(f, at(s, 10.4), at(s, 10.95));
 	const stamp = sp(f, at(s, 13.5), 9);
 	const hops = [1240, 1070, 900];
@@ -283,10 +283,10 @@ const SB: React.FC = () => {
 		<AbsoluteFill>
 			<Stage>
 				<svg width={1080} height={1920} style={{position: 'absolute', inset: 0}}>
-					<line x1={540} y1={1440} x2={540} y2={700} stroke="#c9cfdb" strokeWidth={8} strokeDasharray="4 22" strokeLinecap="round" />
+					<line x1={540} y1={1440} x2={540} y2={790} stroke="#c9cfdb" strokeWidth={8} strokeDasharray="4 22" strokeLinecap="round" />
 				</svg>
 				<div style={{position: 'absolute', left: 540 - 70, top: 1470 - 70, width: 140, height: 140, ...CARD, borderRadius: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{I.phone(84, INK)}</div>
-				<div style={{position: 'absolute', left: 540 - 70, top: 640 - 70, width: 140, height: 140, ...CARD, borderRadius: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{I.server(84, INK)}</div>
+				<div style={{position: 'absolute', left: 540 - 70, top: 725 - 70, width: 140, height: 140, ...CARD, borderRadius: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{I.server(84, INK)}</div>
 				{hops.map((hy, i) => {
 					const left = i % 2 === 0;
 					const seen = y < hy + 40;
@@ -299,7 +299,8 @@ const SB: React.FC = () => {
 				})}
 				{/* packet / postcard */}
 				<div style={{position: 'absolute', left: 0, right: 0, top: y - 110, display: 'flex', justifyContent: 'center', perspective: 1400}}>
-					<div style={{width: 560, height: 220, position: 'relative', rotate: `0 1 0 ${flip * 180}deg`, transformStyle: 'preserve-3d'}}>
+					<div style={{width: 560, height: 220, position: 'relative'}}>
+					<div style={{position: 'absolute', inset: 0, rotate: `0 1 0 ${flip * 180}deg`, transformStyle: 'preserve-3d'}}>
 						<div style={{position: 'absolute', inset: 0, ...CARD, borderRadius: 28, padding: '26px 32px', backfaceVisibility: 'hidden', fontFamily: MONO, fontSize: 36, color: INK, lineHeight: 1.45}}>
 							<div style={{fontFamily: HZ, fontWeight: 800, fontSize: 24, color: '#8b93a7', letterSpacing: 3}}>ДАННЫЕ · ОТКРЫТО</div>
 							логин: ivan@mail.ru
@@ -313,7 +314,9 @@ const SB: React.FC = () => {
 							<br />
 							пароль: qwerty123
 						</div>
-						<div style={{position: 'absolute', right: -40, top: -30, fontFamily: HZ, fontWeight: 900, fontSize: 52, color: RED, border: `7px solid ${RED}`, borderRadius: 16, padding: '6px 20px', rotate: '-12deg', scale: String(interpolate(stamp, [0, 1], [2.4, 1])), opacity: Math.min(1, stamp * 2), background: 'rgba(255,255,255,0.9)', whiteSpace: 'nowrap'}}>ВИДНО ВСЕМ</div>
+
+					</div>
+						<div style={{position: 'absolute', right: -30, bottom: -46, fontFamily: HZ, fontWeight: 900, fontSize: 52, color: RED, border: `7px solid ${RED}`, borderRadius: 16, padding: '6px 20px', rotate: '-12deg', scale: String(interpolate(stamp, [0, 1], [2.4, 1])), opacity: Math.min(1, stamp * 2), background: 'rgba(255,255,255,0.9)', whiteSpace: 'nowrap'}}>ВИДНО ВСЕМ</div>
 					</div>
 				</div>
 			</Stage>
@@ -336,10 +339,10 @@ const SC: React.FC = () => {
 			<Stage>
 				<AbsoluteFill style={{background: `radial-gradient(ellipse 70% 40% at 50% 60%, rgba(10,77,255,${0.06 + cipher * 0.12}), rgba(10,77,255,0) 70%)`}} />
 				{/* big lock behind */}
-				<div style={{position: 'absolute', left: 0, right: 0, top: 760, display: 'flex', justifyContent: 'center', opacity: lin(f, 0, 10) * (1 - lin(f, at(s, 15.6), at(s, 15.9)) * 0.85), scale: String(0.8 + sp(f, 0) * 0.2)}}>
+				<div style={{position: 'absolute', left: 0, right: 0, top: 700, display: 'flex', justifyContent: 'center', opacity: lin(f, 0, 10) * (1 - lin(f, at(s, 15.6), at(s, 15.9)) * 0.85), scale: String(0.8 + sp(f, 0) * 0.2)}}>
 					{I.lock(260, BLUE, 1.6)}
 				</div>
-				<div style={{position: 'absolute', left: 0, right: 0, top: 1040, display: 'flex', justifyContent: 'center', scale: String(bubbleIn), opacity: Math.min(1, bubbleIn * 2)}}>
+				<div style={{position: 'absolute', left: 0, right: 0, top: 960, display: 'flex', justifyContent: 'center', scale: String(bubbleIn), opacity: Math.min(1, bubbleIn * 2)}}>
 					<div style={{position: 'relative'}}>
 						<Bubble f={f} text="Привет, это мой пароль" cipher={cipher} size={50} />
 						{/* scan bar */}
@@ -348,7 +351,7 @@ const SC: React.FC = () => {
 					</div>
 				</div>
 				{/* cipher stream */}
-				<div style={{position: 'absolute', left: 0, right: 0, top: 1240, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
+				<div style={{position: 'absolute', left: 0, right: 0, top: 1140, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
 					{hexRows.map((r, i) => {
 						const k = lin(f, at(s, 18.1) + i * 5, at(s, 18.1) + i * 5 + 14);
 						const shown = Math.floor(k * r.length);
@@ -360,7 +363,7 @@ const SC: React.FC = () => {
 					})}
 				</div>
 				{/* eyes fail */}
-				<div style={{position: 'absolute', left: 0, right: 0, top: 1470, display: 'flex', justifyContent: 'center', gap: 70}}>
+				<div style={{position: 'absolute', left: 0, right: 0, top: 1350, display: 'flex', justifyContent: 'center', gap: 70}}>
 					{[0, 1, 2].map((i) => {
 						const a = at(s, 19.6) + i * 4;
 						const p = sp(f, a, 11);
@@ -463,7 +466,7 @@ const SE: React.FC = () => {
 						)}
 					</div>
 				) : (
-					<div style={{position: 'absolute', left: 100, right: 100, top: 860, display: 'flex', flexDirection: 'column', gap: 70}}>
+					<div style={{position: 'absolute', left: 130, right: 130, top: 880, display: 'flex', flexDirection: 'column', gap: 70}}>
 						{[
 							{label: 'Возраст Вселенной', sub: '13,8 млрд лет', w: 0.06, c: BLUE, d: 0},
 							{label: 'Подбор ключа', sub: 'в миллиарды раз дольше', w: 1, c: RED, d: 8},
@@ -472,8 +475,8 @@ const SE: React.FC = () => {
 							return (
 								<div key={b.label} style={{opacity: lin(f, at(s, 28.4) + b.d, at(s, 28.4) + b.d + 6)}}>
 									<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16}}>
-										<span style={{fontFamily: HZ, fontWeight: 900, fontSize: 46, color: INK}}>{b.label}</span>
-										<span style={{fontFamily: HZ, fontWeight: 700, fontSize: 32, color: b.c}}>{b.sub}</span>
+										<span style={{fontFamily: HZ, fontWeight: 900, fontSize: 42, color: INK}}>{b.label}</span>
+										<span style={{fontFamily: HZ, fontWeight: 700, fontSize: 28, color: b.c}}>{b.sub}</span>
 									</div>
 									<div style={{height: 64, borderRadius: 32, background: '#e9ecf3', overflow: 'hidden'}}>
 										<div style={{height: '100%', width: `${Math.max(7, b.w * 100 * k)}%`, borderRadius: 32, background: b.c, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 24, boxSizing: 'border-box', color: '#fff', fontFamily: HZ, fontWeight: 900, fontSize: 40}}>{b.w === 1 && k > 0.9 ? '→ ∞' : ''}</div>
