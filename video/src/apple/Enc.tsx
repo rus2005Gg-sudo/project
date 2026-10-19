@@ -3,7 +3,7 @@ import '@fontsource/jetbrains-mono/500.css';
 import {AbsoluteFill, Audio, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {LOGO, INOUT, OUT, blurZoom, clamp} from './kit';
-import {HZ} from './brand';
+import {HZ, HZ_BG, HZ_BLUE, HZ_INK, HZ_SUB, Wordmark} from './brand';
 import {ICONS} from './BotWelcome';
 
 /** «Как работает шифрование» — dark neon explainer, synced to the voice. */
@@ -16,9 +16,11 @@ export const ENC_FRAMES = fr(VOICE + 1.2);
 const DUR = STARTS.map((s, i) => (i < STARTS.length - 1 ? fr(STARTS[i + 1]) : ENC_FRAMES) - fr(s));
 const at = (i: number, t: number) => fr(t) - fr(STARTS[i]);
 
-const BLUE = '#2f6bff';
-const SKY = '#7fa8ff';
-const RED = '#ff3b4d';
+const BLUE = HZ_BLUE;
+const SKY = HZ_BLUE;
+const RED = '#ff3b30';
+const INK = HZ_INK;
+const CARD: React.CSSProperties = {background: '#fff', borderRadius: 34, boxShadow: '0 30px 70px rgba(20,30,60,0.12)'};
 const GREEN = '#2ee59d';
 const MONO = '"JetBrains Mono", monospace';
 const W = 880;
@@ -29,28 +31,18 @@ const rnd = (n: number) => {
 };
 const sp = (f: number, a: number, d = 12) => spring({frame: f - a, fps: ENC_FPS, config: {damping: d, stiffness: 150}});
 
-const Bg: React.FC<{tint?: string}> = ({tint = '47,107,255'}) => {
-	const f = useCurrentFrame();
-	return (
-		<AbsoluteFill style={{background: '#03050c'}}>
-			<AbsoluteFill style={{backgroundImage: 'linear-gradient(rgba(127,168,255,0.06) 2px, transparent 2px), linear-gradient(90deg, rgba(127,168,255,0.06) 2px, transparent 2px)', backgroundSize: '90px 90px', backgroundPosition: `0 ${f * 0.6}px`}} />
-			<AbsoluteFill style={{background: `radial-gradient(ellipse 70% 45% at 50% 50%, rgba(${tint},0.28), rgba(${tint},0) 70%)`}} />
-			{Array.from({length: 40}).map((_, i) => {
-				const s = 3 + rnd(i + 3) * 7;
-				const y = (((rnd(i + 9) * 1920 - f * (0.8 + rnd(i) * 1.5)) % 1920) + 1920) % 1920;
-				return <div key={i} style={{position: 'absolute', left: rnd(i) * 1080, top: y, width: s, height: s, borderRadius: '50%', background: SKY, opacity: 0.2 + 0.5 * Math.abs(Math.sin(f / 15 + i)), boxShadow: `0 0 ${s * 2}px ${SKY}`}} />;
-			})}
-			<AbsoluteFill style={{background: 'radial-gradient(ellipse 85% 75% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.7) 100%)'}} />
-		</AbsoluteFill>
-	);
-};
+const Bg: React.FC<{tint?: string}> = ({tint = '10,77,255'}) => (
+	<AbsoluteFill style={{background: HZ_BG}}>
+		<AbsoluteFill style={{background: `radial-gradient(ellipse 70% 40% at 50% 52%, rgba(${tint},0.10), rgba(${tint},0) 70%)`}} />
+	</AbsoluteFill>
+);
 
 const Page: React.FC<{children: React.ReactNode; gap?: number}> = ({children, gap = 40}) => (
 	<AbsoluteFill style={{padding: '290px 100px 360px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap}}>{children}</AbsoluteFill>
 );
 
 /** heavy headline: slams in with overshoot + blur */
-const Slam: React.FC<{at: number; size: number; children: React.ReactNode; color?: string; glow?: string}> = ({at: a, size, children, color = '#fff', glow}) => {
+const Slam: React.FC<{at: number; size: number; children: React.ReactNode; color?: string; glow?: string}> = ({at: a, size, children, color = INK, glow}) => {
 	const f = useCurrentFrame();
 	const p = sp(f, a, 10);
 	const o = interpolate(f - a, [0, 6], [0, 1], clamp);
@@ -69,7 +61,7 @@ const Tick: React.FC<{at: number; vol?: number}> = ({at: a, vol = 0.18}) => (
 
 const GLYPHS = '#$%&@*+=?!<>/\\{}[]0123456789ABCDEFabcdef§¥Ж▓░';
 /** text that scrambles into cipher at `a` (and stays cipher) */
-const Scramble: React.FC<{text: string; a: number; size: number; color?: string}> = ({text, a, size, color = '#fff'}) => {
+const Scramble: React.FC<{text: string; a: number; size: number; color?: string}> = ({text, a, size, color = INK}) => {
 	const f = useCurrentFrame();
 	return (
 		<span style={{fontFamily: MONO, fontSize: size, color, whiteSpace: 'pre-wrap'}}>
@@ -78,7 +70,7 @@ const Scramble: React.FC<{text: string; a: number; size: number; color?: string}
 				if (k < 0 || ch === ' ') return <span key={i}>{ch}</span>;
 				const g = GLYPHS[Math.floor(rnd(i * 13 + Math.floor(f / 2)) * GLYPHS.length)];
 				return (
-					<span key={i} style={{color: BLUE, textShadow: `0 0 18px ${BLUE}`}}>
+					<span key={i} style={{color: BLUE}}>
 						{g}
 					</span>
 				);
@@ -105,7 +97,7 @@ const S0: React.FC = () => {
 	const scan = interpolate(f, [at(0, 2.0), at(0, 3.5)], [0, 1], clamp);
 	return (
 		<AbsoluteFill>
-			<Bg tint="255,59,77" />
+			<Bg tint="255,59,48" />
 			<Page gap={60}>
 				<Slam at={0} size={110}>
 					Прямо сейчас
@@ -114,7 +106,7 @@ const S0: React.FC = () => {
 					<Bubble>Мой пароль: qwerty123</Bubble>
 					<div style={{position: 'absolute', left: 0, right: 0, top: `${scan * 100}%`, height: 6, background: RED, boxShadow: `0 0 30px ${RED}`, opacity: scan > 0 && scan < 1 ? 1 : 0}} />
 				</div>
-				<Slam at={at(0, 2.05)} size={96} color={RED} glow="rgba(255,59,77,0.8)">
+				<Slam at={at(0, 2.05)} size={96} color={RED}>
 					читает кто угодно
 				</Slam>
 				<div style={{display: 'flex', gap: 40}}>
@@ -141,15 +133,15 @@ const S1: React.FC = () => {
 	const f = useCurrentFrame();
 	return (
 		<AbsoluteFill>
-			<Bg tint="255,59,77" />
+			<Bg tint="255,59,48" />
 			<Page gap={34}>
 				<Bubble style={{fontSize: 46}}>Мой пароль: qwerty123</Bubble>
 				{WHO.map(([ic, t, s], i) => {
 					const p = sp(f, at(1, s), 11);
 					return (
-						<div key={t} style={{width: W, display: 'flex', alignItems: 'center', gap: 28, padding: '26px 36px', borderRadius: 32, background: 'rgba(255,59,77,0.10)', border: `3px solid rgba(255,59,77,${0.3 + 0.3 * p})`, boxShadow: `0 0 ${40 * p}px rgba(255,59,77,0.35)`, translate: `${(1 - p) * (i % 2 ? 600 : -600)}px 0`, opacity: Math.min(1, p * 1.5)}}>
+						<div key={t} style={{width: W, display: 'flex', alignItems: 'center', gap: 28, padding: '26px 36px', borderRadius: 32, ...CARD, border: `3px solid rgba(255,59,48,${0.15 + 0.45 * p})`, translate: `${(1 - p) * (i % 2 ? 600 : -600)}px 0`, opacity: Math.min(1, p * 1.5)}}>
 							<div style={{fontSize: 80}}>{ic}</div>
-							<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 54, color: '#fff', flex: 1}}>{t}</div>
+							<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 54, color: INK, flex: 1}}>{t}</div>
 							<Eye size={80} />
 						</div>
 					);
@@ -169,12 +161,12 @@ const S2: React.FC = () => {
 	const card = sp(f, at(2, 10.6), 12);
 	return (
 		<AbsoluteFill>
-			<Bg tint="255,59,77" />
+			<Bg tint="255,59,48" />
 			<Page gap={44}>
 				<Slam at={0} size={100}>
 					Без шифрования
 				</Slam>
-				<div style={{translate: `${fly}px 0`, rotate: `${-4 + card * 8}deg`, width: 820, padding: 46, borderRadius: 26, background: '#f3ead7', boxShadow: '0 40px 90px rgba(0,0,0,0.6)', position: 'relative'}}>
+				<div style={{translate: `${fly}px 0`, rotate: `${-4 + card * 8}deg`, width: 820, padding: 46, borderRadius: 26, background: '#f3ead7', boxShadow: '0 40px 90px rgba(20,30,60,0.22)', position: 'relative'}}>
 					<div style={{position: 'absolute', right: 40, top: 36, width: 110, height: 130, border: '4px dashed #b9a988', borderRadius: 8}} />
 					<div style={{fontFamily: HZ, fontWeight: 800, fontSize: 40, color: '#7a6a4c', letterSpacing: 4}}>ОТКРЫТКА</div>
 					<div style={{fontFamily: MONO, fontSize: 50, color: '#1c1a16', marginTop: 30, lineHeight: 1.4}}>
@@ -183,7 +175,7 @@ const S2: React.FC = () => {
 						пароль: qwerty123
 					</div>
 				</div>
-				<Slam at={at(2, 11.4)} size={68} color={RED} glow="rgba(255,59,77,0.7)">
+				<Slam at={at(2, 11.4)} size={68} color={RED}>
 					каждый видит, что внутри
 				</Slam>
 				<div style={{display: 'flex', gap: 30}}>
@@ -209,13 +201,13 @@ const S3: React.FC = () => {
 		<AbsoluteFill>
 			<Bg />
 			<Page gap={50}>
-				<Slam at={0} size={110} color={SKY} glow="rgba(47,107,255,0.9)">
+				<Slam at={0} size={110}>
 					Шифрование
 				</Slam>
-				<div style={{width: W, padding: '44px 48px', borderRadius: 34, background: 'rgba(47,107,255,0.08)', border: `3px solid rgba(127,168,255,${0.3 + lock * 0.5})`, boxShadow: `0 0 ${60 * lock}px rgba(47,107,255,0.5)`, textAlign: 'center', minHeight: 230, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+				<div style={{width: W, padding: '44px 48px', borderRadius: 34, ...CARD, border: `3px solid rgba(10,77,255,${0.1 + lock * 0.6})`, textAlign: 'center', minHeight: 230, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
 					<Scramble text="Привет, это мой пароль" a={at(3, 17.3)} size={62} />
 				</div>
-				<div style={{fontSize: 150, scale: String(lock), filter: `drop-shadow(0 0 40px ${BLUE})`}}>🔒</div>
+				<div style={{fontSize: 150, scale: String(lock), filter: 'drop-shadow(0 20px 30px rgba(20,30,60,0.2))'}}>🔒</div>
 				<Slam at={at(3, 19.6)} size={64}>
 					без ключа — <span style={{color: SKY}}>не прочитать</span>
 				</Slam>
@@ -248,12 +240,12 @@ const S4: React.FC = () => {
 						<React.Fragment key={t as string}>
 							{i === 1 ? (
 								<svg width={240} height={40}>
-									<line x1={0} y1={20} x2={240} y2={20} stroke={BLUE} strokeWidth={8} strokeDasharray="24 36" strokeDashoffset={-dash} style={{filter: `drop-shadow(0 0 10px ${BLUE})`}} />
+									<line x1={0} y1={20} x2={240} y2={20} stroke={BLUE} strokeWidth={8} strokeDasharray="24 36" strokeDashoffset={-dash} />
 								</svg>
 							) : null}
 							<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, scale: String(0.6 + (p as number) * 0.4), opacity: p as number}}>
-								<div style={{width: 230, height: 230, borderRadius: 50, background: 'rgba(47,107,255,0.12)', border: `3px solid ${SKY}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120, boxShadow: `0 0 50px rgba(47,107,255,0.5)`}}>{ic}</div>
-								<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 50, color: '#fff'}}>{t}</div>
+								<div style={{width: 230, height: 230, ...CARD, borderRadius: 50, border: `3px solid ${BLUE}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120}}>{ic}</div>
+								<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 50, color: INK}}>{t}</div>
 							</div>
 						</React.Fragment>
 					))}
@@ -277,9 +269,9 @@ const S5: React.FC = () => {
 				<Slam at={0} size={84}>
 					Подобрать перебором
 				</Slam>
-				<div style={{fontFamily: MONO, fontSize: 46, color: SKY, opacity: 0.8}}>ключ: {tries}… ✕</div>
-				<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 52, color: '#9aa6c4'}}>💻 суперкомпьютеру нужно</div>
-				<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 150, color: '#fff', letterSpacing: -6, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', textShadow: `0 0 50px ${BLUE}`}}>{n.toLocaleString('ru-RU')}+</div>
+				<div style={{fontFamily: MONO, fontSize: 46, color: HZ_SUB}}>ключ: {tries}… ✕</div>
+				<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 52, color: HZ_SUB}}>💻 суперкомпьютеру нужно</div>
+				<div style={{fontFamily: HZ, fontWeight: 900, fontSize: 150, color: BLUE, letterSpacing: -6, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'}}>{n.toLocaleString('ru-RU')}+</div>
 				<Slam at={at(5, 28.0)} size={70} color={SKY}>
 					лет
 				</Slam>
@@ -301,15 +293,15 @@ const S6: React.FC = () => {
 		<AbsoluteFill>
 			<Bg />
 			<Page gap={44}>
-				<Slam at={0} size={56} color="#9aa6c4">
+				<Slam at={0} size={56} color={HZ_SUB}>
 					Кстати
 				</Slam>
-				<div style={{scale: String(sp(f, at(6, 31.4), 10)), width: 230, height: 230, borderRadius: 56, background: 'linear-gradient(160deg,#fff,#e4ebf8)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 80px rgba(47,107,255,0.6)`}}>
+				<div style={{scale: String(sp(f, at(6, 31.4), 10)), width: 230, height: 230, borderRadius: 56, background: 'linear-gradient(160deg,#fff,#e4ebf8)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 30px 60px rgba(20,30,60,0.18)'}}>
 					<Img src={LOGO} style={{width: '68%'}} />
 				</div>
-				<Slam at={at(6, 31.5)} size={120}>
-					Horz VPN
-				</Slam>
+				<div style={{scale: String(sp(f, at(6, 31.5), 11))}}>
+					<Wordmark size={150} />
+				</div>
 				<div style={{position: 'relative', width: W, height: 150}}>
 					{ICONS.slice(0, 6).map((ic, i) => {
 						const x0 = i * 150;
@@ -320,12 +312,12 @@ const S6: React.FC = () => {
 							</div>
 						);
 					})}
-					<div style={{position: 'absolute', left: 340, top: -10, width: 180, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120, opacity: pull, scale: String(0.5 + pull * 0.5), filter: `drop-shadow(0 0 40px ${BLUE})`}}>🔒</div>
+					<div style={{position: 'absolute', left: 340, top: -10, width: 180, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 120, opacity: pull, scale: String(0.5 + pull * 0.5), filter: 'drop-shadow(0 20px 30px rgba(20,30,60,0.2))'}}>🔒</div>
 				</div>
 				<Slam at={at(6, 33.0)} size={58}>
 					шифрует <span style={{color: SKY}}>весь трафик</span>
 				</Slam>
-				<div style={{scale: String(sp(f, at(6, 35.3), 11)), fontFamily: HZ, fontWeight: 800, fontSize: 52, color: '#fff', background: BLUE, padding: '26px 64px', borderRadius: 70, boxShadow: `0 0 50px ${BLUE}`}}>Ссылка в профиле</div>
+				<div style={{scale: String(sp(f, at(6, 35.3), 11)), fontFamily: HZ, fontWeight: 800, fontSize: 52, color: '#fff', background: INK, padding: '26px 64px', borderRadius: 70}}>Ссылка в профиле</div>
 			</Page>
 			<Tick at={at(6, 31.5)} />
 			<Tick at={at(6, 34.6)} vol={0.24} />
@@ -342,8 +334,8 @@ const S7: React.FC = () => {
 		<AbsoluteFill>
 			<Bg />
 			<Page gap={50}>
-				<div style={{scale: String(sp(f, 2, 10) * tap), fontFamily: HZ, fontWeight: 900, fontSize: 76, color: '#03050c', background: '#fff', padding: '36px 90px', borderRadius: 90, boxShadow: '0 0 60px rgba(127,168,255,0.6)'}}>Подписывайся</div>
-				<Slam at={at(7, 37.4)} size={64} color="#9aa6c4">
+				<div style={{scale: String(sp(f, 2, 10) * tap), fontFamily: HZ, fontWeight: 900, fontSize: 76, color: '#fff', background: INK, padding: '36px 90px', borderRadius: 90}}>Подписывайся</div>
+				<Slam at={at(7, 37.4)} size={64} color={HZ_SUB}>
 					дальше — <span style={{color: SKY}}>как работают ключи</span> 🔑
 				</Slam>
 			</Page>
@@ -356,15 +348,17 @@ const SCENES = [S0, S1, S2, S3, S4, S5, S6, S7];
 
 const Watermark: React.FC = () => (
 	<div style={{position: 'absolute', top: 190, left: 0, right: 0, display: 'flex', justifyContent: 'center'}}>
-		<div style={{display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', padding: '10px 26px 10px 14px', borderRadius: 40}}>
-			<Img src={LOGO} style={{width: 38}} />
-			<span style={{fontFamily: HZ, fontWeight: 800, fontSize: 30, color: '#fff'}}>Horz VPN</span>
+		<div style={{display: 'flex', alignItems: 'baseline', gap: 10, background: 'rgba(255,255,255,0.92)', padding: '10px 28px', borderRadius: 40, boxShadow: '0 8px 24px rgba(20,30,60,0.10)'}}>
+			<span style={{fontFamily: HZ, fontWeight: 900, fontSize: 34, color: INK, letterSpacing: -1}}>
+				HORZ<span style={{color: BLUE}}>.</span>
+			</span>
+			<span style={{fontFamily: HZ, fontWeight: 700, fontSize: 20, color: HZ_SUB, letterSpacing: 4}}>VPN</span>
 		</div>
 	</div>
 );
 
 export const Enc: React.FC = () => (
-	<AbsoluteFill style={{background: '#03050c'}}>
+	<AbsoluteFill style={{background: '#fbfcfe'}}>
 		<TransitionSeries>
 			{SCENES.map((S, i) => (
 				<React.Fragment key={i}>
