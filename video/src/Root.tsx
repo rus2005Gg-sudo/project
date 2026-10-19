@@ -35,6 +35,7 @@ import {ThreeTest} from './apple/ThreeTest';
 import {BUMPER3D_FRAMES, Bumper3D} from './apple/Bumper3D';
 import {BUMPERPRO_FRAMES, BumperPro} from './apple/BumperPro';
 import {HAPP_FRAMES, HappTheme} from './apple/HappTheme';
+import {ENC_FPS, ENC_FRAMES, Enc} from './apple/Enc';
 import {CHALLENGE_FRAMES, CH_FPS, Challenge} from './apple/Challenge';
 import {MONTH_APPLE_FRAMES, MA_FPS, MonthApple} from './apple/MonthApple';
 
@@ -70,6 +71,7 @@ export const Root: React.FC = () => (
 		<Composition id="Bumper3D" component={Bumper3D} durationInFrames={BUMPER3D_FRAMES} fps={30} width={1696} height={672} />
 		<Composition id="BumperPro" component={BumperPro} durationInFrames={BUMPERPRO_FRAMES} fps={30} width={1696} height={672} />
 		<Composition id="HappTheme" component={HappTheme} durationInFrames={HAPP_FRAMES} fps={30} width={1080} height={1920} />
+		<Composition id="Enc" component={Enc} durationInFrames={ENC_FRAMES} fps={ENC_FPS} width={1080} height={1920} />
 		<Composition id="Team" component={Team} durationInFrames={TEAM_FRAMES} fps={TEAM_FPS} width={1080} height={1920} />
 		<Composition id="Avatar" component={Avatar} durationInFrames={1} fps={30} width={1080} height={1080} />
 		<Composition id="Styles" component={StyleFrames} durationInFrames={1} fps={30} width={3240} height={1920} />
