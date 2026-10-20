@@ -25,6 +25,48 @@
     (gimp-drawable-fill l TRANSPARENT-FILL)
     l))
 
+; GIMP 2.8+ пишет параметры текста в XCF так, что 2.6 их не читает
+; («unexpected number `20', expected number (float)»). Поэтому текстовые
+; слои превращаем в обычные и прикрепляем к ним параметры в формате 2.6:
+; при открытии 2.6 снова сделает из них редактируемый текст.
+(define (vv-fixed6 x)
+  (let* ((n (inexact->exact (round (* x 1000000))))
+         (frac (number->string (remainder n 1000000))))
+    (string-append (number->string (quotient n 1000000)) "."
+                   (substring "000000" 0 (- 6 (string-length frac))) frac)))
+
+(define (vv-text-parasite t)
+  (let ((c (car (gimp-text-layer-get-color t))))
+    (string-append
+      "(text \"" (car (gimp-text-layer-get-text t)) "\")\n"
+      "(font \"" (car (gimp-text-layer-get-font t)) "\")\n"
+      "(font-size " (vv-fixed6 (car (gimp-text-layer-get-font-size t))) ")\n"
+      "(color (color-rgb " (vv-fixed6 (/ (car c) 255.0)) " "
+                           (vv-fixed6 (/ (cadr c) 255.0)) " "
+                           (vv-fixed6 (/ (caddr c) 255.0)) "))\n")))
+
+(define (vv-text-for-gimp26 img)
+  (if (defined? 'gimp-item-attach-parasite)
+      (for-each
+        (lambda (t)
+          (if (= (car (gimp-item-is-text-layer t)) TRUE)
+              (let* ((name (car (gimp-item-get-name t)))
+                     (data (vv-text-parasite t))
+                     (offs (gimp-drawable-offsets t))
+                     (l (car (gimp-layer-new img (car (gimp-drawable-width t))
+                                             (car (gimp-drawable-height t))
+                                             RGBA-IMAGE name 100 NORMAL-MODE))))
+                (gimp-image-insert-layer img l 0
+                                         (car (gimp-image-get-item-position img t)))
+                (gimp-drawable-fill l TRANSPARENT-FILL)
+                (gimp-layer-set-offsets l (car offs) (cadr offs))
+                (gimp-edit-copy t)
+                (gimp-floating-sel-anchor (car (gimp-edit-paste l FALSE)))
+                (gimp-image-remove-layer img t)
+                (gimp-item-set-name l name)
+                (gimp-item-attach-parasite l (list "gimp-text-layer" 1 data)))))
+        (vector->list (cadr (gimp-image-get-layers img))))))
+
 (define (vv-build earth-file photo-file out-dir show)
   (let* ((img (car (gimp-image-new 800 400 RGB)))
          (bg (car (gimp-file-load-layer RUN-NONINTERACTIVE img earth-file))))
@@ -85,6 +127,7 @@
     ; обычный режим слоёв, чтобы XCF открывался и в старых версиях GIMP
     (for-each (lambda (l) (gimp-layer-set-mode l NORMAL-MODE))
               (vector->list (cadr (gimp-image-get-layers img))))
+    (vv-text-for-gimp26 img)
 
     ; Сохранение: XCF со слоями + PNG и JPG
     (gimp-image-undo-enable img)
