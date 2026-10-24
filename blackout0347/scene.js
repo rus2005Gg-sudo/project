@@ -101,7 +101,7 @@ const torch = new THREE.SpotLight(0xdfe8ff, 0, 9, 0.55, 0.55, 1.3); cam.add(torc
 /* ----------------------------------------------------------------- figures */
 function makeFigure(o = {}) {
   const cloth = o.black ? new THREE.MeshBasicMaterial({ color: 0x030304 }) : std(0x15171c);
-  const skin = o.black ? cloth : std(0xd9d4cc, { roughness: 0.6 });
+  const skin = o.black ? cloth : std(0xa9a49b, { roughness: 0.8 });
   const g = new THREE.Group();
   const leg = (x) => box(0.15, 0.86, 0.17, cloth, x, 0.43, 0, g);
   leg(-0.11); leg(0.11);
@@ -137,7 +137,7 @@ function renderAt(t) {
   oppFig.g.position.x = WINX + 0.35 * pk * 0.5; oppFig.head.rotation.y = 0;
   // figures
   doorFig.g.visible = t < K.black + 0.02; behindFig.g.visible = dark;
-  torch.intensity = t >= K.turnA ? (t > 11.7 && t < 11.78 ? 0 : 55) : 0;
+  torch.intensity = t >= K.turnA ? (t > 11.7 && t < 11.78 ? 0 : 9) : 0;
   // camera
   let pos = CAM0.slice(), fov = 62, yaw = 0, pitch = 0, look = null;
   const wob = (s, a) => (noise1(t * s) - 0.5) * a;
