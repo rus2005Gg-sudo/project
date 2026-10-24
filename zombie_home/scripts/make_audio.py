@@ -55,7 +55,6 @@ ambient = np.zeros(N); sfx = np.zeros(N); steps = np.zeros(N); tick = np.zeros(N
 # city bed: low rumble + wind + far siren + fire crackle
 rum = lp(noise(N), 200) * 0.35 + lp(noise(N), 1200) * 0.06 * (0.5 + 0.5 * np.sin(2 * np.pi * T / 9))
 ambient += rum
-add(ambient, 0.5, siren(30, 0.5)); add(ambient, 38, siren(30, 0.4))
 for tt in np.arange(0.4, DUR - 2, 0.45):
     if rs.rand() < 0.3: add(ambient, tt, hp(noise(int(0.05 * SR)), 1500) * np.exp(-np.arange(int(0.05 * SR)) / SR * 70), 0.25)
 # distant screams and groans outside
