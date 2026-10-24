@@ -24,3 +24,7 @@ blackout0347/node_modules/
 blackout0347/.hyperframes/
 blackout0347/render.log
 blackout0347/snapshots/
+blackout0347/.out_*/
+blackout0347/work-*/
+blackout0347/out_v1.mp4
+blackout0347/assets/mix.wav
