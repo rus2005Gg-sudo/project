@@ -47,7 +47,7 @@ bt = 8.2; i = 0
 while bt < 12.95:
     for off, g in ((0, 1.0), (0.17, 0.7)):
         add(np.sin(2 * np.pi * 52 * (t - bt - off)) * np.exp(-(t - bt - off) * 22) * ((t >= bt + off)) * 0.8 * g)
-    bt += 1.0 - 0.045 * i * 3; i += 1
+    bt += max(0.38, 1.0 - 0.13 * i); i += 1
 # phone flashlight click, floor creak, breath
 add(hp(rs.randn(N), 1500) * env(10.9, 10.93, 0.001, 0.02) * 0.6, 0.0)
 add(lp(rs.randn(N) * np.sin(2 * np.pi * 70 * t), 300) * env(12.0, 12.35, 0.05, 0.2) * 0.25, 0.5)
