@@ -51,6 +51,21 @@ def siren(dur, g=1.0):
     f = 700 + 350 * np.sin(2 * np.pi * 0.22 * t)
     return lp(np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * 0.5, 2500) * g
 
+import glob, os
+def load_samples():
+    out = []
+    for f in sorted(glob.glob('assets/sfx/*.mp3')):
+        w = '/tmp/claude-0/zh_' + os.path.basename(f) + '.wav'
+        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', f, '-ac', '1', '-ar', str(SR), w], stdin=subprocess.DEVNULL, check=True)
+        _, x = wavfile.read(w); x = x.astype(float) / 32768; x /= (np.abs(x).max() + 1e-9); out.append((os.path.basename(f), x))
+    return out
+SAMPLES = load_samples()
+def zg(rate=1.0, cutoff=None, g=1.0, k=0):
+    # a generated ElevenLabs creature sound, pitch/speed-shifted and filtered for distance
+    name, x = SAMPLES[k % len(SAMPLES)]
+    n = int(len(x) / rate); y = np.interp(np.linspace(0, len(x) - 1, n), np.arange(len(x)), x)
+    if cutoff: y = lp(y, cutoff, 2)
+    return y * np.hanning(len(y)) ** 0.3 * g
 ambient = np.zeros(N); sfx = np.zeros(N); steps = np.zeros(N); tick = np.zeros(N)
 # city bed: low rumble + wind + far siren + fire crackle
 rum = lp(noise(N), 200) * 0.35 + lp(noise(N), 1200) * 0.06 * (0.5 + 0.5 * np.sin(2 * np.pi * T / 9))
@@ -58,16 +73,15 @@ ambient += rum
 for tt in np.arange(0.4, DUR - 2, 0.45):
     if rs.rand() < 0.3: add(ambient, tt, hp(noise(int(0.05 * SR)), 1500) * np.exp(-np.arange(int(0.05 * SR)) / SR * 70), 0.25)
 # distant screams and groans outside
-for tt in [1.1, 3.3, 8.2, 12.3, 14.9, 24.2, 30.5, 41.2]: add(sfx, tt, scream(rs.uniform(0.6, 1.2), 0.22))
-for tt in np.arange(1.5, T_["heard"], 2.1): add(sfx, tt, groan(rs.uniform(0.8, 1.5), rs.uniform(80, 110), 0.3))
+for i, tt in enumerate(np.arange(1.2, T_["heard"], 1.7)): add(sfx, tt, zg(rs.uniform(0.62, 1.0), rs.choice([900, 1400, 2200]), rs.uniform(0.35, 0.6), i))
 # neighbours on the stairs (muffled) + door thumps
-for k, tt in enumerate(np.linspace(T_["stairs"], T_["yard"] - 0.3, 5)): add(sfx, tt, scream(0.6, 0.45, True)); add(sfx, tt + 0.2, thud(0.35, 90))
+for k, tt in enumerate(np.linspace(T_["stairs"], T_["yard"] - 0.3, 5)): add(sfx, tt, zg(rs.uniform(0.7, 0.95), 700, 0.7, k)); add(sfx, tt + 0.2, thud(0.35, 90))
 # TV static + emergency tone
 add(sfx, 3.0, hp(noise(int(5 * SR)), 2500) * 0.12, 1.0)
 for k in range(5):
     add(sfx, T_["five"] + k * 0.5, (np.sin(2 * np.pi * 853 * np.arange(int(0.22 * SR)) / SR) + np.sin(2 * np.pi * 960 * np.arange(int(0.22 * SR)) / SR)) * 0.2)
 # runner past the window
-add(sfx, T_["yard"] + 0.2, scream(1.0, 0.5)); add(sfx, 0.3, scream(1.2, 0.4))
+add(sfx, T_["yard"] + 0.2, zg(0.8, 2500, 0.8)); add(sfx, 0.3, zg(0.75, 2000, 0.7))
 # light switch: click + power-down hum + deep thump
 add(sfx, T_["lightsOff"], click(1.0, 1600)); add(sfx, T_["lightsOff"] + 0.05, thud(0.7, 70)); add(sfx, T_["lightsOff"] + 0.02, impact(0.4))
 # curtains swish
@@ -100,7 +114,7 @@ add(sfx, T_["momCalled"] - 0.1, tone(440, 440, 0.12, 10) * 0.4); add(sfx, T_["mo
 add(sfx, T_["key"] - 0.3, bp(noise(int(0.5 * SR)), 2500, 7000) * np.abs(np.sin(2 * np.pi * 30 * np.arange(int(0.5 * SR)) / SR)) * 0.35)
 add(sfx, T_["key"] + 0.5, click(1.0, 900)); add(sfx, T_["key"] + 0.5, thud(0.5, 80)); add(sfx, T_["key"] + 0.9, click(0.9, 700))
 for k in range(8): add(sfx, T_["chain"] + k * 0.07, click(0.5, 3500 - 120 * k))
-add(sfx, T_["chain"] + 0.5, thud(0.9, 50)); add(sfx, T_["chain"] + 0.6, groan(1.4, 85, 0.6))
+add(sfx, T_["chain"] + 0.5, thud(0.9, 50)); add(sfx, T_["chain"] + 0.6, zg(0.7, 3500, 1.0))
 # rule hits
 for k in ["rule1", "rule2", "rule3", "rule4", "rule5"]: add(sfx, T_[k], impact(0.45)); add(sfx, T_[k] - 0.2, riser(0.2, 0.25))
 # heartbeat from "heard" on, faster and louder
@@ -114,8 +128,8 @@ dr *= np.interp(T, [0, T_["rule1"] - 1, T_["rule1"] + 3, T_["rule4"], T_["heard"
 # footsteps behind him + zombie breath, then the sting
 tt = T_["steps"]
 while tt < T_["behind"] + 0.3: add(steps, tt, thud(0.8, 90)); tt += 0.55
-add(sfx, T_["behind"] - 0.1, groan(1.4, 75, 0.9)); add(sfx, T_["behind"], impact(1.4)); add(sfx, T_["behind"] - 0.5, riser(0.5, 0.6))
-add(sfx, T_["steps"] - 0.4, bp(noise(int(1.5 * SR)), 300, 1500) * np.hanning(int(1.5 * SR)) * 0.2)
+add(sfx, T_["behind"] - 0.1, zg(0.6, 4500, 1.3)); add(sfx, T_["behind"], impact(1.4)); add(sfx, T_["behind"] - 0.5, riser(0.5, 0.6))
+add(sfx, T_["steps"] - 0.4, zg(0.55, 3000, 0.5))
 
 env = lp(np.abs(vo), 6, 1); env = np.clip(env / (np.percentile(env, 95) + 1e-9), 0, 1)
 duck = 1 - 0.55 * env
