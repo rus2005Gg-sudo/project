@@ -28,3 +28,10 @@ blackout0347/.out_*/
 blackout0347/work-*/
 blackout0347/out_v1.mp4
 blackout0347/assets/mix.wav
+blackout_guide/.hyperframes/
+blackout_guide/node_modules/
+blackout_guide/render.log
+blackout_guide/out_v1.mp4
+blackout_guide/assets/mix.wav
+blackout_guide/.out_*/
+blackout_guide/work-*/
