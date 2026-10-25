@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal import butter, lfilter
-SR = 44100; D = 28.0; N = int(SR * D)
+SR = 44100; D = 30.0; N = int(SR * D)
 t = np.arange(N) / SR
 rs = np.random.RandomState(3)
 def lp(x, f): b, a = butter(2, f / (SR / 2), "low"); return lfilter(b, a, x)
@@ -59,7 +59,7 @@ scr = sum(np.sign(np.sin(2 * np.pi * f * (t - H) * (1 + 0.15 * np.exp(-(t - H) *
 add(hp(scr, 400) * he * 0.55, 0.0); add(hp(rs.randn(N), 3000) * he * 0.35)
 add(np.sin(2 * np.pi * 38 * (t - H)) * np.exp(-(t - H) * 4) * (t >= H) * 1.3)
 # after the cut: dead silence, then a soft low tone under end card
-add(np.sin(2 * np.pi * 55 * t) * env(24.1, 28.0, 0.8, 0.8) * 0.12)
+add(np.sin(2 * np.pi * 55 * t) * env(24.1, 30.0, 0.8, 0.8) * 0.12)
 from scipy.io import wavfile as wf
 vsr, v = wf.read("/tmp/claude-0/vo.wav"); v = v.astype(np.float64) / 32768.0
 V = np.zeros(N); off = int(1.27 * SR); n = min(len(v), N - off); V[off:off + n] = v[:n]

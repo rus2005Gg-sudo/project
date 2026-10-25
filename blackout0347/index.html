@@ -33,11 +33,14 @@
       #big { position: absolute; left: 0; right: 0; top: 660px; text-align: center; opacity: 0; color: #fff; font-weight: 900; font-size: 250px; letter-spacing: 6px; text-shadow: 0 0 40px rgba(0,0,0,.8); }
       #endc { position: absolute; left: 0; right: 0; top: 760px; text-align: center; opacity: 0; color: #fff; }
       #endc .a { font-weight: 900; font-size: 96px; line-height: 1.08; text-transform: uppercase; padding: 0 60px; }
+      #endc2 { position: absolute; left: 0; right: 0; top: 760px; text-align: center; opacity: 0; color: #fff; }
+      #endc2 .a { font-weight: 900; font-size: 96px; line-height: 1.1; text-transform: uppercase; padding: 0 50px; }
+      #endc2 .b { font-weight: 800; font-size: 44px; letter-spacing: 8px; margin-top: 44px; color: #ffd60a; }
       #endc .b { font-weight: 800; font-size: 44px; letter-spacing: 10px; margin-top: 40px; color: #ffd60a; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="28">
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="30">
       <canvas id="gl" width="1080" height="1920"></canvas>
       <div id="tint" class="layer"></div>
       <div id="vig" class="layer"></div>
@@ -50,11 +53,12 @@
       <div id="flash" class="layer"></div>
       <div id="dip" class="layer"></div>
       <div id="endc"><div class="a">Он был<br />в <span class="y">первом</span> кадре</div><div class="b">↻ ПОСМОТРИ ЕЩЁ РАЗ</div></div>
-      <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="28" data-track-index="2" data-volume="1"></audio>
+      <div id="endc2"><div class="a">50 <span class="r">❤</span> лайков —<br />и будет <span class="y">продолжение</span></div><div class="b">ПРОДОЛЖЕНИЕ СЛЕДУЕТ…</div></div>
+      <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="30" data-track-index="2" data-volume="1"></audio>
     </div>
 
     <script>
-      window.__DUR = 28;
+      window.__DUR = 30;
       const tl = gsap.timeline({ paused: true });
       const cap = document.getElementById("cap");
       const CAPS = [
@@ -76,6 +80,8 @@
       // 03:47 flash title right after the blackout
       tl.set("#big", { opacity: 1 }, 0.85); tl.fromTo("#big", { scale: 1.15 }, { scale: 1, duration: 0.25, ease: "power3.out" }, 0.85); tl.set("#big", { opacity: 0 }, 2.6);
       tl.fromTo("#endc", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 24.2);
+      tl.to("#endc", { opacity: 0, duration: 0.3 }, 26.6);
+      tl.fromTo("#endc2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 26.9);
       window.__timelines = window.__timelines || {};
       window.__timelines["main"] = tl;
 
