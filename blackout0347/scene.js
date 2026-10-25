@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
-const W = 1080, H = 1920, DUR = 16;
+const W = 1080, H = 1920, DUR = 28;
 /* cue times (s) */
-const K = { black: 0.7, win: 6.6, z0: 7.4, z1: 9.4, back: 10.4, turnA: 10.9, turnB: 12.7, hit: 13.0 };
+const K = { black: 0.7, win: 9.85, z0: 10.2, z1: 12.8, back: 19.9, turnA: 20.2, turnB: 22.4, hit: 23.3 };
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, u) => a + (b - a) * u;
@@ -132,23 +132,23 @@ function renderAt(t) {
   // opposite window: flickers on
   const fl = t >= K.win && (t > K.win + 0.55 || Math.sin((t - K.win) * 60) > -0.2) && !(t > K.win + 0.18 && t < K.win + 0.3);
   lampWin.visible = fl; oppFig.g.visible = fl && t > K.win + 0.8;
-  const pk = ease(win(t, 8.0, 8.6));
+  const pk = ease(win(t, 17.5, 18.3));
   oppFig.armR.rotation.z = lerp(0.1, -1.55, pk); oppFig.armR.rotation.x = 0; oppFig.armL.rotation.z = -0.05;
   oppFig.g.position.x = WINX + 0.35 * pk * 0.5; oppFig.head.rotation.y = 0;
   // figures
   doorFig.g.visible = t < K.black + 0.02; behindFig.g.visible = dark;
-  torch.intensity = t >= K.turnA ? (t > 11.7 && t < 11.78 ? 0 : 9) : 0;
+  torch.intensity = t >= K.turnA ? (t > 21.3 && t < 21.38 ? 0 : 9) : 0;
   // camera
   let pos = CAM0.slice(), fov = 62, yaw = 0, pitch = 0, look = null;
   const wob = (s, a) => (noise1(t * s) - 0.5) * a;
-  if (t < K.z0) { pitch = -0.01 + wob(0.7, 0.01); yaw = ease(win(t, 0, 7.2)) * 0.06 - 0.03 * (1 - win(t, 0, 3)); }
+  if (t < K.z0) { pitch = -0.01 + wob(0.7, 0.01); yaw = ease(win(t, 0, 10)) * 0.06 - 0.03 * (1 - win(t, 0, 3)); }
   else if (t < K.back) {
-    const u = ease(win(t, K.z0, K.z1)); fov = lerp(62, 22, u);
+    const u = ease(win(t, K.z0, K.z1)); fov = lerp(62, lerp(22, 19.5, win(t, K.z1, 19.0)), u);
     yaw = lerp(0.06, 0.0, u); pitch = lerp(-0.01, 0.07, u);
-    if (t > K.z1) { const v = ease(win(t, K.z1, K.back)); fov = lerp(22, 62, v); pitch = lerp(0.07, -0.02, v); }
+    if (t > 19.0) { const v = ease(win(t, 19.0, K.back)); fov = lerp(19.5, 62, v); pitch = lerp(0.07, -0.02, v); }
   } else {
     fov = 62; const v = ease(win(t, K.turnA, K.turnB)); yaw = lerp(0.0, Math.PI, v) + (noise1(t * 3) - 0.5) * 0.04 * v; pitch = lerp(-0.02, 0.0, v);
-    if (t > 11.75 && t < 11.95) yaw -= 0.05; // hesitation
+    if (t > 21.4 && t < 21.6) yaw -= 0.05; // hesitation
     if (t >= K.turnB) { fov = lerp(62, 54, win(t, K.turnB, K.hit)); pos[2] = lerp(0.5, 0.35, win(t, K.turnB, K.hit)); }
   }
   const shk = (t >= K.turnA ? 0.012 : 0.004) * (0.6 + 0.8 * noise1(t * 2));
