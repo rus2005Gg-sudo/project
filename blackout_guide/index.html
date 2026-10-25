@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Блэкаут: 6 правил</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <script src="assets/cues.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./assets/vendor/three.module.js" } }
+    </script>
+    <style>
+      @font-face { font-family: "Mont"; font-weight: 800; src: url("assets/fonts/montserrat-cyrillic-800-normal.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: "Mont"; font-weight: 800; src: url("assets/fonts/montserrat-latin-800-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Mont"; font-weight: 900; src: url("assets/fonts/montserrat-cyrillic-900-normal.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: "Mont"; font-weight: 900; src: url("assets/fonts/montserrat-latin-900-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      html, body { margin: 0; background: #000; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: "Mont", sans-serif; }
+      #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: contrast(1.06) saturate(.85) blur(.5px); }
+      .layer { position: absolute; inset: 0; pointer-events: none; }
+      #vig { background: radial-gradient(ellipse at 50% 48%, rgba(0,0,0,0) 45%, rgba(0,0,0,.6) 100%); }
+      #tint { background: rgba(20, 50, 70, .14); mix-blend-mode: soft-light; }
+      #grain { opacity: .2; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 1.2 -.1'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>"); background-size: 300px 300px; }
+      #dip { background: #000; opacity: 0; }
+      #rec { position: absolute; left: 56px; top: 74px; display: flex; align-items: center; gap: 16px; color: #fff; font-weight: 800; font-size: 38px; letter-spacing: 3px; text-shadow: 0 2px 6px rgba(0,0,0,.7); }
+      #rec i { width: 22px; height: 22px; border-radius: 50%; background: #ff2b2b; display: inline-block; }
+      #hud { position: absolute; right: 56px; top: 70px; text-align: right; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.7); }
+      #hud .lb { font-weight: 800; font-size: 26px; letter-spacing: 6px; opacity: .75; }
+      #hud .tm { font-weight: 900; font-size: 54px; letter-spacing: 3px; color: #ffd60a; }
+      .plate { position: absolute; left: 0; right: 0; top: 250px; display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; text-align: center; }
+      .plate .tag { font-weight: 800; font-size: 34px; letter-spacing: 12px; color: #ffd60a; text-shadow: 0 2px 10px rgba(0,0,0,.9); }
+      .plate .big { font-weight: 900; font-size: 74px; line-height: 1.05; color: #fff; text-transform: uppercase; max-width: 960px; text-shadow: 0 3px 16px rgba(0,0,0,.95), 0 0 3px #000; }
+      #cap { position: absolute; left: 60px; right: 60px; top: 1380px; height: 300px; }
+      .chunk { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; opacity: 0; }
+      .chunk span { display: block; text-align: center; font-weight: 900; font-size: 70px; line-height: 1.1; color: #fff; text-shadow: 0 4px 18px rgba(0,0,0,.95), 0 0 3px #000; max-width: 960px; }
+      .y { color: #ffd60a; } .r { color: #ff3b30; }
+      .card { position: absolute; left: 0; right: 0; top: 700px; text-align: center; opacity: 0; color: #fff; padding: 0 60px; }
+      .card .a { font-weight: 900; font-size: 88px; line-height: 1.1; text-transform: uppercase; }
+      .card .b { font-weight: 800; font-size: 42px; letter-spacing: 8px; margin-top: 40px; color: #ffd60a; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="60">
+      <canvas id="gl" width="1080" height="1920"></canvas>
+      <div id="tint" class="layer"></div><div id="vig" class="layer"></div><div id="grain" class="layer"></div>
+      <div id="rec"><i id="dot"></i>REC</div>
+      <div id="hud"><div class="lb">БЛЭКАУТ</div><div class="tm" id="hh">ЧАС 0</div></div>
+      <div id="plates"></div>
+      <div id="cap"></div>
+      <div id="c1" class="card"><div class="a">Через 3 дня воды не было у&nbsp;<span class="r">всех</span></div><div class="b">КРОМЕ ТЕХ, КТО ДОСМОТРЕЛ</div></div>
+      <div id="c2" class="card"><div class="a">50 <span class="r">❤</span> лайков —<br /><span class="y">часть 2</span></div><div class="b">ЕДА БЕЗ ПЛИТЫ</div></div>
+      <div id="dip" class="layer"></div>
+      <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="60" data-track-index="2" data-volume="1"></audio>
+    </div>
+    <script>
+      const C = window.CUE, E = C.e; window.__DUR = C.dur;
+      const tl = gsap.timeline({ paused: true });
+      const cap = document.getElementById("cap");
+      C.caps.forEach(([a, b, h]) => {
+        const el = document.createElement("div"); el.className = "chunk"; const s = document.createElement("span"); s.innerHTML = h; el.appendChild(s); cap.appendChild(el);
+        tl.set(el, { opacity: 1 }, a); tl.fromTo(s, { scale: 1.1, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power3.out" }, a); tl.set(el, { opacity: 0 }, b);
+      });
+      const PL = [["r1", "ПРАВИЛО 1", "Не открывай холодильник"], ["r2", "ПРАВИЛО 2", "Набери воды"], ["r3", "ПРАВИЛО 3", "Береги телефон"], ["r4", "ПРАВИЛО 4", "Фонарик, а не свечи"], ["r5", "ПРАВИЛО 5", "Сохрани тепло"], ["r6", "ПРАВИЛО 6", "Включи радио"]];
+      const plates = document.getElementById("plates");
+      PL.forEach(([k, tag, big], i) => {
+        const el = document.createElement("div"); el.className = "plate"; el.innerHTML = '<div class="tag">' + tag + '</div><div class="big">' + big + "</div>"; plates.appendChild(el);
+        const a = E[k], b = i + 1 < PL.length ? E[PL[i + 1][0]] : E.chk;
+        tl.fromTo(el, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, a); tl.to(el, { opacity: 0, duration: 0.3 }, b - 0.35);
+      });
+      tl.fromTo("#c1", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5 }, E.end + 0.3); tl.to("#c1", { opacity: 0, duration: 0.3 }, E.end + 3.4);
+      tl.fromTo("#c2", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5 }, E.end + 3.8);
+      window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+      const hh = document.getElementById("hh"), dot = document.getElementById("dot"), dip = document.getElementById("dip");
+      window.__ui = (t) => {
+        dot.style.opacity = Math.floor(t * 1.6) % 2 ? 0.25 : 1;
+        const hours = Math.round(72 * Math.pow(Math.min(1, t / E.twist), 1.4));
+        hh.textContent = hours < 24 ? "ЧАС " + hours : "ДЕНЬ " + (1 + Math.floor(hours / 24)) + " · " + String(hours % 24).padStart(2, "0") + ":00";
+        dip.style.opacity = t >= E.twist + 1.6 && t < E.end + 0.3 ? Math.min(1, (t - E.twist - 1.6) / 0.5) : (t >= E.end + 0.3 ? 1 : 0);
+      };
+    </script>
+    <script type="module" src="scene.js"></script>
+  </body>
+</html>
