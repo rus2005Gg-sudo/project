@@ -253,7 +253,7 @@ function renderAt(t) {
   screenG.userData.glow.intensity = 3.2; screenG.userData.stamp.visible = Math.floor(t * 2) % 2 === 0 || t < E.board + 1;
   const tgt = new THREE.Vector3(s.px, 1.6, s.pz); for (const e of X) updateExtra(e, t, tgt);
   // camera
-  const c = camAt(t); const sh = 0.0035 * (0.6 + noise1(t * 2)); cam.fov = c.f; cam.updateProjectionMatrix();
+  const c = window.__camOverride || camAt(t); const sh = window.__camOverride ? 0 : 0.0035 * (0.6 + noise1(t * 2)); cam.fov = c.f; cam.updateProjectionMatrix();
   cam.position.set(c.p[0] + (noise1(t * 5) - 0.5) * sh * 2, c.p[1] + (noise1(t * 5 + 20) - 0.5) * sh * 2, c.p[2]); const roll = (noise1(t * 2.5 + 70) - 0.5) * 0.012; if (c.up) cam.up.set(c.up[0], c.up[1], c.up[2]); else cam.up.set(Math.sin(roll), Math.cos(roll), 0); cam.lookAt(c.l[0], c.l[1], c.l[2]); cam.updateMatrixWorld(true);
   lights(ctx, t); window.__ui && window.__ui(t, ctx);
   renderer.render(scene, cam);

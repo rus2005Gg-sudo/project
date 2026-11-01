@@ -19,31 +19,36 @@
 Жанр: мистический подростковый триллер. Настроение: тревога, тайна, недоверие. Без крови, насилия, оружия, наготы, алкоголя, курения.
 Сериал о подростках 15 лет — показывай их только в бытовых ситуациях: школа, дом, улица, телефон.
 
-## 4. ПЕРСОНАЖИ — ВНЕШНОСТЬ ФИКСИРОВАНА
-Описывай персонажа в КАЖДОМ промпте одними и теми же словами (копируй дословно), иначе внешность «поплывёт».
+## 4. ПЕРСОНАЖИ — ВНЕШНОСТЬ ФИКСИРОВАНА (смотри референсы 00_TEMA_sheet и 00_CHARACTERS_sheet)
+Описывай персонажа в КАЖДОМ промпте одними и теми же словами (копируй дословно) и прикладывай его картинку-референс, иначе внешность «поплывёт».
 
-ТЁМА (главный герой):
-"a skinny 15-year-old Russian boy with messy chestnut-brown hair, pale skin, tired anxious eyes with dark circles, wearing a dark navy-blue hoodie, black jeans and white sneakers"
+ТЁМА (главный герой), референсы 01–05:
+"a stylized low-poly 3D game character: a slim teenage boy with spiky chestnut-brown hair, simple flat-shaded face with thin dark eyebrows, wearing a bright royal-blue hoodie, dark navy shorts, white socks and black sneakers, dark green backpack"
 
-ДАНЯ (лучший друг, подозреваемый):
-"a 15-year-old boy with short black buzz-cut hair, olive skin, a confident half-smile, wearing a black bomber jacket over a grey t-shirt, silver chain, black joggers"
+ДАНЯ (лучший друг, подозреваемый), референс 25:
+"a stylized low-poly 3D game character: a slim teenage boy with brown hair tied in a small bun, light grey t-shirt, dark grey trousers, red sneakers"
 
-ЛИЗА (отличница с тайной):
-"a 15-year-old girl with long straight blonde hair in a low ponytail, round glasses, serious face, wearing a beige knitted sweater and a dark plaid skirt"
+ЛИЗА (отличница с тайной), референс 20:
+"a stylized low-poly 3D game character: a teenage girl with straight shoulder-length blonde hair, white fitted t-shirt, rust-orange trousers, dark shoes"
 
-МАКС (звезда класса, шутник):
-"a tall 16-year-old boy with wavy dyed-platinum hair, tanned skin, wide grin, wearing an oversized red varsity jacket and white hoodie"
+МАКС (звезда класса, шутник), референс 21:
+"a stylized low-poly 3D game character: a teenage boy with spiky bright-red hair, earring, open black vest over a white tank top, ripped grey jeans, black boots"
 
-НЕИЗВЕСТНЫЙ: никогда не показывается. Только тёмный силуэт вдали, тень, рука в чёрной перчатке, светящийся экран, три точки «печатает».
+МАССОВКА (одноклассники), референсы 22–24: девушка с фиолетовым ирокезом в рваных чёрных джинсах; парень в майке и красных шортах; девушка с рыжими волосами в зелёном платье.
+
+НЕИЗВЕСТНЫЙ: никогда не показывается. Только тёмный силуэт вдали, тень, светящийся экран, три точки «печатает».
 
 ## 5. ЛОКАЦИИ (одинаковые во всех сериях)
-- КОМНАТА ТЁМЫ: маленькая спальня ночью, кровать у окна, тумбочка с красным цифровым будильником, постеры на стенах, за окном огни ночного города. Свет — только синий от телефона и красный от будильника.
-- ШКОЛЬНЫЙ КОРИДОР: длинный коридор, ряды серо-голубых металлических шкафчиков, плитка на полу, мерцающие лампы дневного света, стены: снизу зелёная краска, сверху белая.
-- КАБИНЕТ 12: класс с партами, зелёная доска, проектор, окна с дневным светом.
+- КОМНАТА ТЁМЫ (референсы 11, 12, 13): маленькая спальня ночью, кровать у окна, тумбочка с красным цифровым будильником, постеры на стенах, за окном огни ночного города. Свет — только синий от телефона и красный от будильника.
+- ШКОЛЬНЫЙ КОРИДОР (референсы 06, 07): длинный коридор, ряды серо-голубых металлических шкафчиков, плитка на полу, мерцающие лампы дневного света, стены: снизу зелёная краска, сверху белая.
+- КАБИНЕТ 12 (референсы 08, 09, 10): класс с партами, зелёная доска, проектор, окна с дневным светом.
 - ДВОР ШКОЛЫ: кирпичное здание школы, вечер, фонари.
 
-## 6. ВИЗУАЛЬНЫЙ СТИЛЬ (вставляй в каждый промпт)
-"Vertical 9:16, photorealistic cinematic teen thriller, shot on a smartphone-like cinema camera, natural skin texture, realistic lighting, film grain, shallow depth of field, cold blue-grey color grade with red accents, subtle handheld camera movement, no text, no subtitles, no logos, no watermarks"
+## 6. ВИЗУАЛЬНЫЙ СТИЛЬ — СТИЛИЗОВАННОЕ 3D, НЕ ФОТОРЕАЛИЗМ (вставляй в каждый промпт)
+ГЛАВНОЕ: это НЕ живое видео и НЕ реалистичные люди. Это стилизованная 3D-анимация как в инди-игре / Roblox-like / low-poly: простые угловатые фигуры, гладкие однотонные материалы, лица без детальной мимики, чистые цвета. Повторяй стиль приложенных картинок-референсов (папка refs). Если результат похож на живых актёров — это ОШИБКА, переделай.
+"Vertical 9:16, stylized low-poly 3D game animation, like a Unity/Roblox indie game cutscene, simple flat-shaded characters with blocky faces, clean 3D environment, soft realistic lighting and shadows, slight film grain, cinematic camera, NOT photorealistic, NOT live action, no real humans, no text, no subtitles, no logos, no watermarks"
+Негатив (чего не должно быть): photorealistic, live action, real people, realistic skin, detailed faces, anime, 2D cartoon.
+Как использовать референсы: для каждого клипа выбирай режим «картинка → видео» (image-to-video) и бери за стартовый кадр подходящий референс: комната — 11/12/13, коридор — 06/07, класс — 08/09/10, крупный план Тёмы — 01/02/05. Персонаж и окружение должны совпадать с картинкой.
 Правила кадра:
 - Строго вертикально 9:16, 15 секунд.
 - В кадре НЕТ текста: экраны телефонов светятся, но без читаемых букв (текст добавит монтажёр).
@@ -72,7 +77,8 @@
 
 ## 10. ПРОВЕРКА ПЕРЕД ВЫДАЧЕЙ (мысленно отметь каждый пункт)
 1. Формат 9:16, 15 секунд?
-2. Внешность героев совпадает с разделом 4 (волосы, одежда)?
+2. Внешность героев совпадает с разделом 4 и референсами (волосы, одежда)?
+2б. Стиль — стилизованное low-poly 3D как на референсах, а НЕ живые люди?
 3. В кадре нет букв, субтитров, логотипов?
 4. Озвучка по-русски, дословно, голос тот же, что в прошлых клипах?
 5. Первые 2 секунды цепляют, последние — оставляют напряжение?
