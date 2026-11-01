@@ -43,7 +43,7 @@ export function buildWorld(scene, T) {
   }
   // exterior backdrop seen through windows
   const outTex = ctex(512, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#9ec6e8"); gr.addColorStop(0.7, "#d8e8f0"); gr.addColorStop(1, "#7aa05a"); g.fillStyle = gr; g.fillRect(0, 0, w, h); const r = rng(9); for (let i = 0; i < 26; i++) { g.fillStyle = "rgba(" + (30 + r() * 30) + "," + (80 + r() * 50) + ",40,.85)"; g.beginPath(); g.arc(r() * w, h * 0.62 + r() * 30, 26 + r() * 40, 0, 7); g.fill(); } }, { rep: false });
-  const outM = new THREE.MeshBasicMaterial({ map: outTex, color: 0xffffff }); plane(14, 6, outM, -9, 1.7, -0.5, Math.PI / 2, C);
+  const outM = new THREE.MeshBasicMaterial({ map: outTex, color: 0xffffff }); plane(9.0, 6, outM, -7, 1.7, 0.0, Math.PI / 2, C);
   for (const c of wz) { // frames, glass, sill, curtains, radiators
     for (const [dy, hh, ww] of [[sillY - 0.02, 0.05, winW + 0.1], [sillY + winH + 0.02, 0.05, winW + 0.1]]) b(0.28, hh, ww, M.white, -3.58, dy, c, C, [1, 1]);
     b(0.1, winH, 0.06, M.white, -3.62, sillY + winH / 2, c - winW / 2, C); b(0.1, winH, 0.06, M.white, -3.62, sillY + winH / 2, c + winW / 2, C); b(0.08, winH, 0.04, M.white, -3.6, sillY + winH / 2, c, C); b(0.08, 0.04, winW, M.white, -3.6, sillY + winH * 0.62, c, C);
@@ -111,7 +111,7 @@ export function buildWorld(scene, T) {
   // end door (exit to outside) with daylight beyond
   b(0.12, 0.12, 2.6, M.dark, -13.95, 2.2, 6.0, C, [1, 1]); const exL = mkDoor(C, 1.2, 2.2, true), exR = mkDoor(C, 1.2, 2.2, true); exL.position.set(-13.95, 0, 4.75); exL.rotation.y = Math.PI / 2; exR.position.set(-13.95, 0, 7.45); exR.rotation.y = -Math.PI / 2; W.anim.exitL = exL; W.anim.exitR = exR;
   const dayTex = ctex(256, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#bfe0ff"); gr.addColorStop(1, "#fff6e0"); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, { rep: false });
-  plane(3.4, 3.0, new THREE.MeshBasicMaterial({ map: dayTex, color: 0xffffff }), -15.0, 1.5, 6.0, Math.PI / 2, C);
+  plane(3.4, 3.0, new THREE.MeshBasicMaterial({ map: dayTex, color: 0xb8b8b8 }), -15.0, 1.5, 6.0, Math.PI / 2, C);
   
   // fluorescent lamps in corridor and classroom
   W.lamps = [];

@@ -53,7 +53,7 @@ const pack = new THREE.Group(); scene.add(pack);
 { const body = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.44, 0.17), packM); body.castShadow = true; pack.add(body); const pk = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.06), packM); pk.position.set(0, -0.08, 0.1); pack.add(pk);
   const top = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), strapM); top.position.set(0, 0.23, 0); pack.add(top); const s1 = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.012, 6, 16, Math.PI), strapM); s1.position.set(0, 0.22, 0); pack.add(s1); }
 const clothM = new THREE.MeshStandardMaterial({ color: 0x5f84a0, roughness: 1, side: THREE.DoubleSide });
-const cloth = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.12, 4, 3), clothM); scene.add(cloth); cloth.visible = false; const glueCloth = restAttach(RT, cloth, "Head", [0, 0.07, 0.13]);
+const cloth = new THREE.Mesh(new THREE.CylinderGeometry(0.105, 0.11, 0.1, 18, 1, true, -1.1, 2.2), clothM); scene.add(cloth); cloth.visible = false; const glueCloth = restAttach(RT, cloth, "Head", [0, 0.045, 0.035]);
 const drops = []; for (let i = 0; i < 5; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.008, 6, 6), new THREE.MeshStandardMaterial({ color: 0x9fd0ff, roughness: 0.1, metalness: 0.2 })); scene.add(d); drops.push(d); }
 const phoneTex = ctex(128, 256, () => {}, { rep: false });
 const phone = new THREE.Group(); { const body = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.15, 0.009), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.3 })); phone.add(body); const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.062, 0.138), new THREE.MeshBasicMaterial({ map: phoneTex, toneMapped: false })); scr.position.z = 0.0051; phone.add(scr); }
@@ -77,7 +77,7 @@ const PS = {
   alarmed: { sL: [-0.4, 0, 0.35], eL: [-0.9, 0, 0], sR: [-0.4, 0, -0.35], eR: [-0.9, 0, 0], spine: [-0.04, 0, 0], head: [-0.08, 0.3, 0], hL: [0, 0, 0.04], hR: [0, 0, -0.04] },
   reach: { sR: [-1.52, 0, -0.1], eR: [-0.12, 0, 0], wR: [0, 0, 0], sL: [0.1, 0, 0.18], eL: [-0.5, 0, 0], spine: [0.1, 0, 0], head: [0.05, 0, 0] },
   recoil: { sR: [-0.5, 0, -0.45], eR: [-1.7, 0, 0], sL: [0.2, 0, 0.3], eL: [-0.6, 0, 0], spine: [-0.12, 0, 0], chest: [-0.1, 0, 0], head: [-0.18, 0, 0], hL: [0.15, 0, 0.05], hR: [-0.35, 0, -0.1], kL: [0.2, 0, 0], kR: [0.35, 0, 0], hipZ: -0.08 },
-  crouch: { hipY: -0.32, hipZ: -0.12, hL: [-0.85, 0, 0.05], kL: [1.05, 0, 0], hR: [-0.85, 0, -0.05], kR: [1.05, 0, 0], spine: [0.7, 0, 0], chest: [0.35, 0, 0], neck: [-0.55, 0, 0], head: [-0.3, 0, 0], sL: [-0.1, 0, 0.15], eL: [-0.5, 0, 0], sR: [-1.35, 0, -0.35], eR: [-1.9, 0, 0] },
+  crouch: { hipY: -0.2, hipZ: -0.04, hL: [-0.62, 0, 0.06], kL: [0.95, 0, 0], hR: [-0.62, 0, -0.06], kR: [0.95, 0, 0], aL: [-0.3, 0, 0], aR: [-0.3, 0, 0], spine: [0.36, 0, 0], chest: [0.16, 0, 0], neck: [-0.3, 0, 0], head: [-0.2, 0, 0], sL: [-0.1, 0, 0.15], eL: [-0.5, 0, 0], sR: [-0.7, 0, -0.3], eR: [-1.95, 0, 0] },
   lookUp: { sL: [0.04, 0, 0.1], eL: [-0.2, 0, 0], sR: [0.04, 0, -0.1], eR: [-0.2, 0, 0], spine: [-0.05, 0, 0], neck: [-0.25, 0, 0], head: [-0.4, 0, 0] },
   point: { sR: [-1.3, 0, -0.2], eR: [-0.3, 0, 0], sL: [0.08, 0, 0.12], eL: [-0.25, 0, 0], spine: [0.04, 0.2, 0], head: [0, -0.25, 0] },
   pullDoor: { sR: [-1.0, 0, -0.55], eR: [-0.55, 0, 0], sL: [0.3, 0, 0.3], eL: [-0.6, 0, 0], spine: [0.12, -0.3, 0], head: [0.05, -0.3, 0], hL: [-0.1, 0, 0.05], kR: [0.3, 0, 0], hR: [0.15, 0, 0] },
@@ -125,8 +125,8 @@ const KF = [
   // stairwell
   { t: R5 - 0.1, p: [0.0, 63.6], yaw: PI, pose: "run", fl: "fist", fr: "fist", face: "focus" },
   { t: R5 + 0.7, p: [0.0, 62.4], yaw: PI, pose: "run", lin: true, fl: "fist", fr: "fist", face: "scared", wa: 0.8 },
-  { t: R5 + 1.1, p: [-0.3, 61.6], yaw: 0.1, pose: "pullDoor", fl: "open", fr: "grip", face: "focus" },
-  { t: CL + 0.9, p: [-0.3, 61.6], yaw: 0.1, pose: "pullDoor", fl: "open", fr: "grip", face: "focus" },
+  { t: R5 + 1.1, p: [-0.45, 61.3], yaw: 0.1, pose: "pullDoor", fl: "open", fr: "grip", face: "focus" },
+  { t: CL + 0.9, p: [-0.45, 61.3], yaw: 0.1, pose: "pullDoor", fl: "open", fr: "grip", face: "focus" },
   { t: AIR + 1.3, p: [0, 61.6], yaw: PI, pose: "stand", fl: "relax", fr: "relax", face: "scared" },
   // exterior (local z offset -120)
   { t: R6 - 0.2, p: [0.0, -121.2], yaw: 0, pose: "run", fl: "fist", fr: "fist", face: "scared" },
@@ -198,7 +198,7 @@ add(R2 + 1.6, HOT - 0.1, shot(R2 + 1.6, HOT - 0.1, [0.2, 1.5, 2.6], [0.7, 1.45, 
 add(HOT - 0.1, R3 - 0.15, shot(HOT - 0.1, R3 - 0.15, [0.9, 1.5, 2.3], [0.8, 1.55, 2.0], [2.1, 1.25, 3.7], [2.1, 1.3, 3.6], 48, 52));
 // corridor
 add(R3 - 0.15, CR - 0.1, shot(R3 - 0.15, CR - 0.1, [0.2, 0.55, 6.3], [-0.4, 0.8, 6.2], [3.5, 2.6, 5.6], [4.5, 2.7, 5.8], 62, 66));
-add(CR - 0.1, NL, (t) => { const c = char(t); return { p: [c[0] + 2.3, 0.75, 5.95], l: [c[0] - 1.2, 0.95, 6.1], f: 58 }; });
+add(CR - 0.1, NL, (t) => { const c = char(t); return { p: [c[0] - 2.4, 1.05, 5.0], l: [c[0] + 0.2, 0.95, 6.0], f: 52 }; });
 add(NL, ST + 0.1, shot(NL, ST + 0.1, [-0.6, 1.5, 4.9], [-1.0, 1.5, 5.0], [-3.1, 1.5, 7.2], [-3.0, 1.55, 7.2], 62, 56));
 add(ST + 0.1, R5 - 0.05, (t) => { const c = char(t); return { p: [c[0] + 1.8, 1.3, 5.3], l: [c[0] - 0.8, 1.2, 6.8], f: 55 }; });
 // stairwell
@@ -243,7 +243,7 @@ function lightsFor(ctx, t, c) {
     const cx = camPos.x; fillA.position.set(cx - 1.5, 2.85, 6.0); fillA.intensity = (calm ? 30 : 16) * (calm ? 1 : (0.9 + 0.1 * Math.sin(t * 17) * Math.sin(t * 5))); fillA.distance = 12;
     fillB.position.set(cx + 3.5, 2.85, 6.0); fillB.intensity = calm ? 20 : 9; fillB.color.set(0xfff0d8);
     fireL.position.set(12, 1.4, 5.9); fireL.intensity = (calm ? 40 : 190) * fl; fireL.color.set(0xff6a1f); fireL.distance = 40;
-    accL.position.set(-13, 1.7, 6.0); accL.color.set(0xfff2d6); accL.intensity = 34; accL.distance = 16;
+    accL.position.set(-13, 1.7, 6.0); accL.color.set(0xfff2d6); accL.intensity = calm ? 10 : 34; accL.distance = 16;
     if (ctx === "end") { const k = win(t, E.twist + 0.2, E.twist + 1.0); const fk = (Math.sin(t * 40) > 0 ? 1 : 0.2) * (1 - k); fillA.intensity *= fk; fillB.intensity *= fk; camL.intensity *= fk; hemi.intensity *= fk * 0.8; alarmL.position.set(cx, 2.4, 5.6); alarmL.color.set(0xff2a1a); alarmL.intensity = 30 * (Math.floor(t * 4) % 2 ? 1 : 0.2); alarmL.distance = 14; }
   } else if (ctx === "stairs") {
     hemi.color.set(0xb0bfd8); hemi.groundColor.set(0x504a40); hemi.intensity = 0.5; camL.intensity = 7;
@@ -274,13 +274,13 @@ function renderAt(t) {
   pack.visible = ctx === "class" || ctx === "corr";
   if (ctx === "corr" || ctx === "stairs") { /* hide pack */ pack.visible = false; }
   const clothOn = t > CR + 0.7 && t < E.twist; cloth.visible = clothOn && (ctx === "corr" || ctx === "stairs"); glueCloth(); const cl = win(t, CR + 0.5, CR + 0.9); cloth.scale.setScalar(lerp(0.3, 1, cl));
-  drops.forEach((d, i) => { const k = (t * 1.6 + i * 0.2) % 1; d.visible = cloth.visible; const wp = new THREE.Vector3(); cloth.getWorldPosition(wp); d.position.set(wp.x + (i - 2) * 0.03, wp.y - 0.12 - k * 0.5, wp.z); d.scale.setScalar(1 - k * 0.3); });
+  drops.forEach((d, i) => { const k = (t * 1.6 + i * 0.2) % 1; d.visible = false; const wp = new THREE.Vector3(); cloth.getWorldPosition(wp); d.position.set(wp.x + (i - 2) * 0.03, wp.y - 0.12 - k * 0.5, wp.z); d.scale.setScalar(1 - k * 0.3); });
   phone.visible = (ctx === "ext1") && t > CALL - 0.1; gluePhone();
   // doors
   const dOpen = win(t, R3 - 0.45, R3 - 0.05); W.anim.doorClass.rotation.y = ctx === "class" ? 0 : dOpen * 1.65 + (t < R3 - 0.45 ? 0 : 0);
   if (ctx === "class") W.anim.doorClass.rotation.y = 0; else W.anim.doorClass.rotation.y = 1.65;
   const sOpen = win(t, ST + 0.55, R5 - 0.15); W.anim.doorStairCor.rotation.y = ctx === "corr" ? sOpen * 1.6 : 0;
-  const stOpen = ctx === "stairs" ? (1 - win(t, CL - 0.2, CL + 0.5)) * (t < R5 + 0.2 ? win(t, R5 - 0.1, R5 + 0.2) : 1) : 0; W.anim.doorStairTop.rotation.y = -1.3 * stOpen;
+  const stOpen = ctx === "stairs" ? (1 - win(t, CL - 0.2, CL + 0.5)) * win(t, R5 - 0.45, R5 - 0.1) : 0; W.anim.doorStairTop.rotation.y = -1.55 * stOpen;
   const exOpen = win(t, R6 - 0.5, R6 + 0.2); W.anim.entL.position.x = W.anim.entL.userData.x0 - 1.2 * exOpen; W.anim.entR.position.x = W.anim.entR.userData.x0 + 1.2 * exOpen;
   // elevator indicator blink
   W.anim.call.visible = Math.floor(t * 3) % 2 === 0;

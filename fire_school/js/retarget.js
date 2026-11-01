@@ -18,7 +18,7 @@ export function prepareModel(gltfScene, colors = {}) {
     o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false;
     // smooth the faceted low-poly shading: weld, then rebuild normals
     const g = o.geometry; g.deleteAttribute("normal"); const mg = mergeVertices(g, 1e-4); mg.computeVertexNormals(); o.geometry = mg;
-    const m = o.material.clone(); const c = colors[o.name] ?? colors[m.name]; if (c !== undefined) m.color.set(c); m.roughness = 0.75; m.metalness = 0; m.flatShading = false; o.material = m; meshes.push(o);
+    const m = o.material.clone(); const c = colors[o.name] ?? colors[m.name]; if (c !== undefined) m.color.set(c); m.roughness = 0.75; m.metalness = 0; m.flatShading = false; m.side = THREE.DoubleSide; o.material = m; meshes.push(o);
   });
   return meshes;
 }
