@@ -4,6 +4,9 @@ import { buildTextures } from "./tex.js";
 import { buildWorld } from "./world.js";
 import { makeHuman } from "./human.js";
 import { Fire, Smoke, Plume, smokeTex, flameTex, glowTex, sparkTex } from "./fx.js";
+import { GLTFLoader } from "../assets/vendor/addons/loaders/GLTFLoader.js";
+import { prepareModel, makeRetarget, restAttach } from "./retarget.js";
+import { furnish } from "./props.js";
 
 const params = new URLSearchParams(location.search);
 const PW = +(params.get("w") || 1080), PH = Math.round(PW * 16 / 9);
@@ -26,7 +29,11 @@ const fireL = new THREE.PointLight(0xff7a2a, 0, 40, 1.6); scene.add(fireL);
 const alarmL = new THREE.PointLight(0xff2a1a, 0, 9, 1.6); scene.add(alarmL);
 const accL = new THREE.PointLight(0xffffff, 0, 14, 1.6); scene.add(accL);
 
-const T = buildTextures(); const W = buildWorld(scene, T); const H = makeHuman(T); scene.add(H.root); H.root.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+const T = buildTextures(); const W = buildWorld(scene, T); await furnish(W); const H = makeHuman(T); scene.add(H.root);
+H.root.traverse((o) => { if (o.isMesh) o.visible = false; }); // procedural rig only drives the skinned character
+const gltf = await new GLTFLoader().loadAsync("assets/chars/Casual_Hoodie.glb");
+const model = gltf.scene; prepareModel(model, { Cube008_1: 0x2b4ea8, Cube000: 0x23252b, Cube000_1: 0xe8e8e8, Cube005_1: 0x3b4458 }); H.root.add(model);
+const RT = makeRetarget(H, model);
 const sTex = smokeTex(), fTex = flameTex(), gTex = glowTex(), spTex = sparkTex();
 
 /* ---------- fx ---------- */
@@ -46,11 +53,12 @@ const pack = new THREE.Group(); scene.add(pack);
 { const body = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.44, 0.17), packM); body.castShadow = true; pack.add(body); const pk = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.06), packM); pk.position.set(0, -0.08, 0.1); pack.add(pk);
   const top = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), strapM); top.position.set(0, 0.23, 0); pack.add(top); const s1 = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.012, 6, 16, Math.PI), strapM); s1.position.set(0, 0.22, 0); pack.add(s1); }
 const clothM = new THREE.MeshStandardMaterial({ color: 0x5f84a0, roughness: 1, side: THREE.DoubleSide });
-const cloth = new THREE.Mesh(new THREE.PlaneGeometry(0.19, 0.1, 4, 3), clothM); H.J.head.add(cloth); cloth.position.set(0, 0.035, 0.105); cloth.rotation.x = -0.12; cloth.visible = false;
+const cloth = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.12, 4, 3), clothM); scene.add(cloth); cloth.visible = false; const glueCloth = restAttach(RT, cloth, "Head", [0, 0.07, 0.13]);
 const drops = []; for (let i = 0; i < 5; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.008, 6, 6), new THREE.MeshStandardMaterial({ color: 0x9fd0ff, roughness: 0.1, metalness: 0.2 })); scene.add(d); drops.push(d); }
 const phoneTex = ctex(128, 256, () => {}, { rep: false });
 const phone = new THREE.Group(); { const body = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.15, 0.009), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.3 })); phone.add(body); const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.062, 0.138), new THREE.MeshBasicMaterial({ map: phoneTex, toneMapped: false })); scr.position.z = 0.0051; phone.add(scr); }
-H.hands.R.add(phone); phone.visible = false;
+scene.add(phone); phone.visible = false; const gluePhone = restAttach(RT, phone, "WristR", [-0.02, -0.08, 0.03], new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 2, 0)));
+const gluePack = restAttach(RT, pack, "WristR", [0, -0.3, 0.0], new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 2, 0)));
 function drawPhone(t) { const { g, w, h } = phoneTex.userData; g.fillStyle = "#07120b"; g.fillRect(0, 0, w, h); g.fillStyle = "#4dff88"; g.textAlign = "center"; g.font = "900 54px Mont, sans-serif"; g.fillText("112", w / 2, 108); g.font = "800 22px Mont, sans-serif"; g.fillStyle = "#fff"; g.fillText("ВЫЗОВ…", w / 2, 150); g.fillStyle = "#c2201b"; g.beginPath(); g.arc(w / 2, 214, 20, 0, 7); g.fill(); phoneTex.needsUpdate = true; }
 drawPhone(0);
 
@@ -187,7 +195,7 @@ add(A + 1.9, R1 + 0.3, (t) => { const c = char(t); return { p: [lerp(-1.1, -0.6,
 add(R1 + 0.3, D + 0.4, (t) => { const u = win(t, R1, D); return { p: [lerp(2.3, 1.9, u), lerp(1.0, 1.2, u), -1.5], l: [0.6, lerp(0.95, 1.1, u), 1.2], f: 50 }; });
 add(D + 0.4, R2 + 1.6, (t) => { const c = char(t); const p = rel(c, 1.2, 1.3, -2.0); return { p, l: [c[0] + Math.sin(c[3]) * 1.2, 1.2, c[2] + Math.cos(c[3]) * 1.2], f: 52 }; });
 add(R2 + 1.6, HOT - 0.1, shot(R2 + 1.6, HOT - 0.1, [0.2, 1.5, 2.6], [0.7, 1.45, 3.4], [2.0, 1.2, 4.2], [2.15, 1.3, 4.45], 46, 36));
-add(HOT - 0.1, R3 - 0.15, shot(HOT - 0.1, R3 - 0.15, [0.7, 1.45, 3.4], [0.5, 1.5, 2.6], [2.15, 1.25, 4.2], [2.1, 1.3, 3.8], 38, 46));
+add(HOT - 0.1, R3 - 0.15, shot(HOT - 0.1, R3 - 0.15, [0.9, 1.5, 2.3], [0.8, 1.55, 2.0], [2.1, 1.25, 3.7], [2.1, 1.3, 3.6], 48, 52));
 // corridor
 add(R3 - 0.15, CR - 0.1, shot(R3 - 0.15, CR - 0.1, [0.2, 0.55, 6.3], [-0.4, 0.8, 6.2], [3.5, 2.6, 5.6], [4.5, 2.7, 5.8], 62, 66));
 add(CR - 0.1, NL, (t) => { const c = char(t); return { p: [c[0] + 2.3, 0.75, 5.95], l: [c[0] - 1.2, 0.95, 6.1], f: 58 }; });
@@ -203,7 +211,7 @@ add(CALL - 0.1, NR - 0.2, shot(CALL - 0.1, NR - 0.2, [-1.2, 1.55, -100.6], [-0.6
 add(NR - 0.2, CHK, shot(NR - 0.2, CHK, [2.2, 1.6, -100.6], [1.6, 1.8, -102.0], [-2.0, 4.8, -119], [-5.0, 5.2, -119], 52, 48));
 // plan
 add(CHK, WH, shot(CHK, WH, [-2.4, 1.6, 4.95], [-1.8, 1.6, 5.0], [-0.4, 1.4, 7.5], [-0.3, 1.5, 7.5], 52, 44));
-add(WH, SV - 0.1, shot(WH, SV - 0.1, [-0.6, 1.55, 5.6], [-8.0, 1.8, 5.8], [-0.4, 1.5, 7.5], [-13.5, 2.5, 5.5], 44, 46));
+add(WH, SV - 0.1, shot(WH, SV - 0.1, [-1.2, 1.6, 6.0], [-6.5, 1.7, 6.0], [-13.5, 2.4, 5.4], [-13.5, 2.6, 5.2], 50, 36));
 add(SV - 0.1, E.twist + 0.2, shot(SV - 0.1, E.twist + 0.2, [4.4, 1.5, 5.95], [3.0, 1.5, 5.95], [-0.6, 1.3, 6.0], [-0.6, 1.4, 6.0], 34, 26));
 add(E.twist + 0.2, DUR, (t) => ({ p: [3.0, 1.5, 5.95], l: [-0.6, 1.4, 6.0], f: 26 }));
 function camAt(t) { for (const s of SH) if (t >= s.t0 && t < s.t1) return s.fn(t); return SH[SH.length - 1].fn(t); }
@@ -255,19 +263,19 @@ function renderAt(t) {
   if (ctx === "stairs" && t > AIR + 1.3) { /* position already set */ } else { H.root.position.set(s.px, ctx === "stairs" && t < CL + 1 ? 0 : 0, s.pz); }
   // breathing / micro motion
   const br = Math.sin(t * 2.2) * 0.012; pose = { ...pose, chest: [(pose.chest || Z)[0] + br, (pose.chest || Z)[1], (pose.chest || Z)[2]] };
-  H.root.rotation.y = s.yaw; H.apply(pose); H.setFingers("L", s.fl); H.setFingers("R", s.fr);
+  H.root.rotation.y = s.yaw; RT.reset(); H.apply(pose); H.setFingers("L", s.fl); H.setFingers("R", s.fr); RT.calibrate(); RT.update();
   const face = { ...s.face }; const talk = (t > 0) ? 0 : 0; H.face(face);
   H.root.visible = ctx !== "ext0" && !(ctx === "end" && t > E.twist + 0.9);
   // props
   const pickT = R1 + 1.15, dropT = D + 0.3;
   if (t < pickT) { pack.parent !== scene && scene.add(pack); pack.position.set(0.92, 0.22, 1.28); pack.rotation.set(0, 2.2, 0); }
-  else if (t < dropT) { if (pack.parent !== H.hands.R) H.hands.R.add(pack); pack.position.set(0.0, -0.3, 0.03); pack.rotation.set(0, 1.57, 0); }
+  else if (t < dropT) { if (pack.parent !== scene) scene.add(pack); gluePack(); }
   else { if (pack.parent !== scene) scene.add(pack); const dt = t - dropT, y0 = 0.7, g = 9.8; const bounce = (x) => Math.abs(Math.sin(x * 4.2)) * Math.exp(-x * 4.2) * 0.12; const y = Math.max(0.22, y0 - 0.5 * g * dt * dt + 0) ; pack.position.set(0.5 + 0.33 * Math.cos(0.3) + 0.2, dt < 0.33 ? y : 0.22 + bounce(dt - 0.33) , 1.25); pack.rotation.set(0, 2.2 + dt * 0.5 * (dt < 0.33 ? 1 : 0), dt < 0.33 ? -dt * 1.2 : -0.4); if (dt >= 0.33) pack.rotation.z = -1.35; }
   pack.visible = ctx === "class" || ctx === "corr";
   if (ctx === "corr" || ctx === "stairs") { /* hide pack */ pack.visible = false; }
-  const clothOn = t > CR + 0.7 && t < E.twist; cloth.visible = clothOn && (ctx === "corr" || ctx === "stairs"); const cl = win(t, CR + 0.5, CR + 0.9); cloth.scale.setScalar(lerp(0.3, 1, cl));
+  const clothOn = t > CR + 0.7 && t < E.twist; cloth.visible = clothOn && (ctx === "corr" || ctx === "stairs"); glueCloth(); const cl = win(t, CR + 0.5, CR + 0.9); cloth.scale.setScalar(lerp(0.3, 1, cl));
   drops.forEach((d, i) => { const k = (t * 1.6 + i * 0.2) % 1; d.visible = cloth.visible; const wp = new THREE.Vector3(); cloth.getWorldPosition(wp); d.position.set(wp.x + (i - 2) * 0.03, wp.y - 0.12 - k * 0.5, wp.z); d.scale.setScalar(1 - k * 0.3); });
-  phone.visible = (ctx === "ext1") && t > CALL - 0.1; phone.position.set(0, -0.09, 0.02); phone.rotation.set(0.1, 1.57, 0.1);
+  phone.visible = (ctx === "ext1") && t > CALL - 0.1; gluePhone();
   // doors
   const dOpen = win(t, R3 - 0.45, R3 - 0.05); W.anim.doorClass.rotation.y = ctx === "class" ? 0 : dOpen * 1.65 + (t < R3 - 0.45 ? 0 : 0);
   if (ctx === "class") W.anim.doorClass.rotation.y = 0; else W.anim.doorClass.rotation.y = 1.65;

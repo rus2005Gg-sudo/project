@@ -96,7 +96,7 @@ export function buildWorld(scene, T) {
   // evacuation plan, extinguishers, bulletin board, exit sign, elevator, stairwell door
   W.plan = plane(0.9, 1.26, lit(T.fireplan, { roughness: 0.5 }), -0.2, 1.55, 7.49, Math.PI, C); b(0.96, 1.32, 0.03, M.dark, -0.2, 1.55, 7.51, C, [1, 1]);
   const extFor = (x) => { const g = new THREE.Group(); g.position.set(x, 0, 7.4); C.add(g); const body = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 14), M.red); body.position.y = 1.0; body.castShadow = true; g.add(body); cyl(0.045, 0.1, M.black, 0, 1.32, 0, g); b(0.08, 0.04, 0.12, M.black, 0.03, 1.38, 0.02, g, [1, 1]); plane(0.3, 0.3, lit(ctex(64, 64, (c, w, h) => { c.fillStyle = "#c2202b"; c.fillRect(0, 0, w, h); c.fillStyle = "#fff"; c.font = "900 30px Mont"; c.textAlign = "center"; c.fillText("🔥", 32, 44); }, { rep: false })), 0, 1.85, 0.08 - 0.02, Math.PI, g); return g; };
-  extFor(8.2); extFor(-2.3);
+  W.extGroups = [extFor(8.2), extFor(-2.3)];
   b(1.6, 1.0, 0.04, M.woodD, 9.5, 1.6, 7.47, C, [1, 1]); plane(1.5, 0.9, lit(T.poster[1]), 9.5, 1.6, 7.44, Math.PI, C);
   const exitM = new THREE.MeshBasicMaterial({ map: T.exitSign.map || T.exitSign }); W.anim.exitM = exitM; b(0.7, 0.26, 0.08, M.dark, -13.5, 2.9, 5.0, C, [1, 1]); plane(0.66, 0.24, exitM, -13.5, 2.9, 5.05, 0, C); // faces +z
   b(0.7, 0.26, 0.08, M.dark, -6.4, 2.75, 7.4, C, [1, 1]); plane(0.66, 0.24, exitM, -6.4, 2.75, 7.35, Math.PI, C); const exSign2 = plane(0.66, 0.24, exitM, -2, 2.9, 7.0, Math.PI, C); exSign2.visible = false;

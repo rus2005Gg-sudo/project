@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#222}</style>
+<script type="importmap">{"imports":{"three":"../assets/vendor/three.module.js"}}</script></head><body>
+<canvas id="gl" width="1200" height="900"></canvas>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "../assets/vendor/addons/loaders/GLTFLoader.js";
+const r=new THREE.WebGLRenderer({canvas:document.getElementById("gl"),antialias:true}); r.setSize(1200,900,false); r.toneMapping=THREE.ACESFilmicToneMapping;
+const s=new THREE.Scene(); s.background=new THREE.Color(0x3a4150); s.add(new THREE.HemisphereLight(0xffffff,0x444444,1.5)); const d=new THREE.DirectionalLight(0xffffff,2.5); d.position.set(1,2,3); s.add(d);
+s.add(new THREE.AxesHelper(1));
+const cam=new THREE.PerspectiveCamera(30,1200/900,0.1,50); cam.position.set(2.2,1.3,5.5); cam.lookAt(0,0.95,0);
+new GLTFLoader().load("../assets/chars/Casual_Hoodie.glb",(g)=>{const o=g.scene; const box=new THREE.Box3().setFromObject(o); console.log("bbox",JSON.stringify(box.min),JSON.stringify(box.max)); s.add(o);
+ const o2=o.clone(true); /* skip */
+ const hips=o.getObjectByName("Hips"); const wp=new THREE.Vector3(); hips.getWorldPosition(wp); console.log("hips",wp.toArray().map(v=>v.toFixed(3)));
+ for(const n of ["UpperArmL","LowerArmL","WristL","Index1L","Thumb1L","UpperLegL","LowerLegL","FootL","Head","Chest","Abdomen","Torso","ShoulderL"]){const b=o.getObjectByName(n); b.getWorldPosition(wp); const q=new THREE.Quaternion(); b.getWorldQuaternion(q); console.log(n, wp.toArray().map(v=>v.toFixed(3)).join(","), "q", q.toArray().map(v=>v.toFixed(2)).join(","));}
+ o.traverse(m=>{if(m.isSkinnedMesh) console.log("mesh",m.name, m.material.name, m.geometry.attributes.position.count)});
+ r.render(s,cam);window.done=true;});
+</script></body></html>

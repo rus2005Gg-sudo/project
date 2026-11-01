@@ -39,6 +39,7 @@ while bt < TW:
     for off, g in ((0, 1.0), (0.17, 0.7)): bed += np.sin(2 * np.pi * 52 * (t - bt - off)) * np.exp(-np.clip(t - bt - off, 0, None) * 22) * (t >= bt + off) * 0.55 * g
     bt += max(0.45, 0.95 - 0.1 * (bt - CHK))
 mute = np.where((t > TW + 1.4) & (t < END + 0.3), 0.0, 1.0); bed *= mute
+bed += place("fire", END + 0.3, 0.12, D - END - 0.3, 1.0, 1.5) + place("whoosh", END + 3.4, 0.35)
 # voice
 V = np.zeros(N)
 if os.path.exists("assets/vo.mp3"):
