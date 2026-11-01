@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body><canvas id="gl"></canvas>
+<script type="importmap">{"imports":{"three":"../assets/vendor/three.module.js"}}</script>
+<script type="module">
+import * as THREE from "three"; import { GLTFLoader } from "../assets/vendor/addons/loaders/GLTFLoader.js";
+const ids=["ClassicNightstand_01","desk_lamp_arm_01","alarm_clock_01","book_encyclopedia_set_01","modern_wooden_cabinet"];
+for(const id of ids){ const g=await new GLTFLoader().loadAsync(`../assets/models/${id}/${id}.gltf`); const b=new THREE.Box3().setFromObject(g.scene); const s=b.getSize(new THREE.Vector3()); let n=0; g.scene.traverse(o=>{if(o.isMesh)n++}); console.log(id, "size", s.toArray().map(v=>v.toFixed(2)).join(" x "), "min", b.min.toArray().map(v=>v.toFixed(2)).join(","), "meshes", n); }
+window.done=true;
+</script></body></html>

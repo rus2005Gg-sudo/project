@@ -40,3 +40,7 @@ fire_school/frames/
 fire_school/assets/mix.wav
 fire_school/render.log
 fire_school/assemble.log
+series_0300/*/frames/
+series_0300/*/assets/mix.wav
+series_0300/*/render.log
+series_0300/*/assemble.log
