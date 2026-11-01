@@ -35,3 +35,7 @@ blackout_guide/out_v1.mp4
 blackout_guide/assets/mix.wav
 blackout_guide/.out_*/
 blackout_guide/work-*/
+
+fire_school/frames/
+fire_school/assets/mix.wav
+fire_school/render.log
